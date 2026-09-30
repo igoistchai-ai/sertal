@@ -53,9 +53,9 @@ ADMIN_IDS = {
 # Separate personal Web App logins for administrators.
 # Keep these credentials on the server; they are not exposed to the public UI.
 ADMIN_ACCOUNTS = {
-    "777": "администратор",
-    "778": "администратор2",
-    "779": "администратор3",
+    "7776254829": "администратор",
+    "7782284728": "администратор2",
+    "779625382": "администратор3",
 }
 
 # Persistent database location. On Render, mount a Persistent Disk at /var/data.
@@ -796,7 +796,7 @@ class CustomerAddressData(BaseModel):
 
 @app.get("/")
 async def index():
-    return FileResponse(Path(__file__).resolve().with_name("H4zN8xR1-2.html"))
+    return FileResponse(Path(__file__).resolve().with_name("H4zN8xR1.html"))
 
 
 @app.head("/")
