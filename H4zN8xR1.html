@@ -18,6 +18,15 @@
 
 
 
+\n
+<style id="sertal-remote-icon-fix">
+.remote-status-icon{width:18px;height:18px;object-fit:contain;vertical-align:-4px;display:inline-block}
+</style>
+</head>
+
+
+
+
 </head><body>
 
 <div id="toast" class="toast"></div>
@@ -35,7 +44,7 @@
    <div class="sd-auth-tabs"><button id="authTabLogin" class="active" onclick="openAuth('login');sdAuthTab('login')">Вход</button><button id="authTabRegister" onclick="openAuth('register');sdAuthTab('register')">Регистрация</button><button id="authTabAdmin" onclick="openAuth('admin');sdAuthTab('admin')">Админ</button></div>
    <div id="loginFormBox" class="sd-stack"><input id="loginPhone" class="sd-input" type="tel" placeholder="+374 00 000 000" autocomplete="tel"><button class="sd-btn gold full" onclick="login()">Войти в SERTAL →</button><div class="sd-note">Вход сохраняется в браузере и связан с серверной сессией SERTAL DELIVERY.</div></div>
    <div id="registerFormBox" class="sd-stack hidden"><input id="regName" class="sd-input" placeholder="Ваше имя"><input id="regPhone" class="sd-input" type="tel" placeholder="+374 00 000 000"><button class="sd-btn gold full" onclick="registerCustomer()">Создать аккаунт →</button><div class="sd-note">После регистрации вы сразу попадёте в клиентское приложение.</div></div>
-   <div id="adminFormBox" class="sd-stack hidden"><input id="adminPhone" class="sd-input" type="tel" placeholder="Персональный номер"><input id="adminNickname" class="sd-input" placeholder="Никнейм администратора"><button class="sd-btn gold full" onclick="adminPersonalLogin()">Открыть админ-панель →</button><div class="sd-note">Приватный вход. Права определяются сервером.</div></div>
+   <div id="adminFormBox" class="sd-stack hidden"><input id="adminAccessCode" class="sd-input" type="password" placeholder="Секретный код доступа" autocomplete="off"><button class="sd-btn gold full" onclick="adminLogin()">Открыть админ-панель</button><div class="sd-note">Закрытый доступ. Код проверяется только на сервере.</div></div></div>
    <div class="sd-divider"></div><div class="sd-legal">SERTAL DELIVERY · защищённая сессия · black & gold app experience</div>
   </section>
  </div></div>
@@ -51,10 +60,10 @@
 
   <section id="customerView" class="hidden">
    <div id="customerScreenHome" class="sd-screen active">
-    <section class="sd-card sd-hero"><div class="sd-hero-top"><div><div class="sd-ey">PERSONAL DELIVERY APP</div><h1 class="sd-h1">Доставка<br><span class="sd-gold">без лишнего.</span></h1><p class="sd-sub">Отправьте посылку, документы или покупки. SERTAL покажет маршрут и статус заказа.</p></div><div class="sd-badge">SERTAL<br>24/7</div></div><div class="u-hero-actions"><button class="sd-btn gold" onclick="showCustomerScreen('create')">＋ Создать доставку</button><button class="sd-btn" onclick="showCustomerScreen('orders')">Мои заказы</button></div></section>
+    <section class="sd-card sd-hero"><div class="sd-hero-top"><div><div class="sd-ey">PERSONAL DELIVERY APP</div><h1 class="sd-h1">Доставка<br><span class="sd-gold">без лишнего.</span></h1><p class="sd-sub">Отправьте посылку, документы или покупки. SERTAL покажет маршрут и статус заказа.</p></div><div class="sd-badge">SERTAL<br>24/7</div></div><div class="u-hero-actions"><button class="sd-btn gold" onclick="showCustomerScreen('create')">Создать доставку</button><button class="sd-btn" onclick="showCustomerScreen('orders')">Мои заказы</button></div></section>
     <div class="sd-actions"><button class="sd-action" onclick="showCustomerScreen('create')"><i>＋</i><span><b>Новая доставка</b><span>Создать заказ за минуту</span></span></button><button class="sd-action" onclick="showCustomerScreen('orders')"><i>⌖</i><span><b>Трекинг</b><span>Где курьер?</span></span></button><button class="sd-action" onclick="showCustomerScreen('promos')"><i>%</i><span><b>Промокоды</b><span>Скидки SERTAL</span></span></button><button class="sd-action" onclick="contactAdmin()"><i>◌</i><span><b>Поддержка</b><span>Ответим в чате</span></span></button></div>
     <div class="sd-section"><h2>Текущая доставка</h2><button onclick="showCustomerScreen('orders')">Все →</button></div><div id="customerHomeCurrent" class="sd-card soft"><div class="sd-sub">Загрузка…</div></div>
-    <div class="sd-section"><h2>Мой адрес</h2><button onclick="showCustomerScreen('profile')">Изменить</button></div><div class="sd-card soft"><label class="sd-label">Адрес по умолчанию</label><div class="sd-wrap"><input id="buyerAddress" class="sd-input" placeholder="Ереван, улица, дом…"><button class="sd-btn small sd-gps" onclick="useCurrentLocation('buyerAddress')">⌖ GPS</button></div><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('buyerAddress')">Сохранить адрес</button></div>
+    <div class="sd-section"><h2>Мой адрес</h2><button onclick="showCustomerScreen('profile')">Изменить</button></div><div class="sd-card soft"><label class="sd-label">Адрес по умолчанию</label><div class="sd-wrap"><input id="buyerAddress" class="sd-input" placeholder="Ереван, улица, дом…"><button class="sd-btn small sd-gps" onclick="useCurrentLocation('buyerAddress')">GPS</button></div><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('buyerAddress')">Сохранить адрес</button></div>
     <div class="sd-section"><h2>Интернет + ИИ</h2><button onclick="showCustomerScreen('discover')">Открыть</button></div><div class="sd-card soft"><div class="sd-promo"><input id="buyerGoogleSearch" class="sd-input" placeholder="Найти что-нибудь в интернете…" onkeydown="if(event.key==='Enter')searchGoogle()"><button class="sd-btn gold" onclick="searchGoogle()">⌕</button></div><div id="buyerSearchResults"></div></div>
    </div>
 
@@ -82,17 +91,17 @@
 
    <div id="customerScreenPromos" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')">‹</button><div><div class="sd-ey">SERTAL REWARDS</div><h2 class="sd-h2">Промокоды</h2></div></div><div class="sd-card"><label class="sd-label">Проверить код</label><div class="sd-promo"><input id="standalonePromo" class="sd-input" placeholder="Введите промокод"><button class="sd-btn gold" onclick="previewStandalonePromo()">Проверить</button></div><div id="standalonePromoInfo" class="sd-info hidden"></div></div><div class="sd-section"><h2>Предложения</h2></div><div class="sd-promo-card"><div class="pct">%</div><div class="sd-code">SERTAL10</div><p>Скидка на заказ при выполнении условий промокода.</p><button class="sd-btn small" onclick="document.getElementById('directPromo').value='SERTAL10';showCustomerScreen('create')">Использовать</button></div><div class="sd-promo-card"><div class="pct">%</div><div class="sd-code">SERTAL20</div><p>Специальное предложение для клиентов SERTAL. Условия проверяются сервером.</p><button class="sd-btn small" onclick="document.getElementById('directPromo').value='SERTAL20';showCustomerScreen('create')">Использовать</button></div></div>
 
-   <div id="customerScreenProfile" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')">‹</button><div><div class="sd-ey">ACCOUNT</div><h2 class="sd-h2">Профиль</h2></div></div><div class="sd-card"><div class="sd-profile"><div id="sdProfileAvatar" class="sd-avatar">S</div><div><div class="sd-ey">SERTAL MEMBER</div><h2 id="sdProfileName" class="sd-h2">Профиль</h2><div id="sdProfilePhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Личные данные</h2></div><div class="sd-card"><div class="sd-grid2"><div><label class="sd-label">Имя</label><div id="sdDataName" class="sd-sub">—</div></div><div><label class="sd-label">Телефон</label><div id="sdDataPhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Мои адреса</h2></div><div class="sd-card"><input id="profileAddress" class="sd-input" placeholder="Адрес по умолчанию"><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('profileAddress')">Сохранить</button><button class="sd-btn full u-mt-7" onclick="useCurrentLocation('profileAddress')">⌖ Определить по GPS</button></div><div class="sd-menu"><button onclick="contactAdmin()"><i>◌</i><b>Поддержка</b><em>›</em></button><button onclick="showCustomerScreen('promos')"><i>%</i><b>Промокоды</b><em>›</em></button><button onclick="showCustomerScreen('orders')"><i>▣</i><b>Мои заказы</b><em>›</em></button><button onclick="logout()"><i>↪</i><b>Выйти</b><em>›</em></button></div></div>
+   <div id="customerScreenProfile" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')">‹</button><div><div class="sd-ey">ACCOUNT</div><h2 class="sd-h2">Профиль</h2></div></div><div class="sd-card"><div class="sd-profile"><div id="sdProfileAvatar" class="sd-avatar">S</div><div><div class="sd-ey">SERTAL MEMBER</div><h2 id="sdProfileName" class="sd-h2">Профиль</h2><div id="sdProfilePhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Личные данные</h2></div><div class="sd-card"><div class="sd-grid2"><div><label class="sd-label">Имя</label><div id="sdDataName" class="sd-sub">—</div></div><div><label class="sd-label">Телефон</label><div id="sdDataPhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Мои адреса</h2></div><div class="sd-card"><input id="profileAddress" class="sd-input" placeholder="Адрес по умолчанию"><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('profileAddress')">Сохранить</button><button class="sd-btn full u-mt-7" onclick="useCurrentLocation('profileAddress')">Определить по GPS</button></div><div class="sd-menu"><button onclick="contactAdmin()"><i>◌</i><b>Поддержка</b><em>›</em></button><button onclick="showCustomerScreen('promos')"><i>%</i><b>Промокоды</b><em>›</em></button><button onclick="showCustomerScreen('orders')"><i>▣</i><b>Мои заказы</b><em>›</em></button><button onclick="logout()"><i>↪</i><b>Выйти</b><em>›</em></button></div></div>
 
    <div id="buyerHomePanel" class="hidden"></div><div id="buyerDiscoverPanel" class="hidden"></div><div id="buyerProfilePanel" class="hidden"></div><div id="buyerPromoPanel" class="hidden"></div><div id="restaurantShopArea" class="hidden"></div><div id="customerSupportArea" class="hidden"></div>
    <nav id="buyerBottomNav" class="sd-bottom"><button class="active" onclick="showCustomerScreen('home');sdBottom(this)"><span>⌂</span><small>Главная</small></button><button onclick="showCustomerScreen('orders');sdBottom(this)"><span>▣</span><small>Заказы</small></button><button onclick="showCustomerScreen('create');sdBottom(this)"><span>＋</span><small>Создать</small></button><button onclick="showCustomerScreen('promos');sdBottom(this)"><span>%</span><small>Промо</small></button><button onclick="showCustomerScreen('profile');sdBottom(this)"><span>♙</span><small>Профиль</small></button></nav>
   </section>
 
   <section id="adminView" class="hidden"><div class="sd-admin">
-   <aside class="sd-side"><div class="sd-side-brand"><div class="sd-ey">SERTAL CONTROL</div><b>ADMIN PANEL</b></div><nav><button class="active tab" onclick="adminTab('map',this)">⌖ Карта</button><button class="tab" onclick="adminTab('orders',this)">▣ Заказы</button><button class="tab" onclick="adminTab('customers',this)">♙ Клиенты</button><button class="tab" onclick="adminTab('couriers',this)">♧ Курьеры</button><button class="tab" onclick="adminTab('promos',this)">% Промокоды</button><button class="tab" onclick="adminTab('stats',this)">▥ Статистика</button><button class="tab" onclick="adminTab('ai',this)">✦ ИИ</button></nav><div class="sd-side-bottom"><button onclick="logout()">↪ Выйти</button></div></aside>
+   <aside class="sd-side"><div class="sd-side-brand"><div class="sd-ey">SERTAL CONTROL</div><b>ADMIN PANEL</b></div><nav><button class="active tab" onclick="adminTab('map',this)">Карта</button><button class="tab" onclick="adminTab('orders',this)">▣ Заказы</button><button class="tab" onclick="adminTab('customers',this)">♙ Клиенты</button><button class="tab" onclick="adminTab('couriers',this)">♧ Курьеры</button><button class="tab" onclick="adminTab('promos',this)">% Промокоды</button><button class="tab" onclick="adminTab('stats',this)">▥ Статистика</button><button class="tab" onclick="adminTab('ai',this)">✦ ИИ</button></nav><div class="sd-side-bottom"><button onclick="logout()">Выйти</button></div></aside>
    <main><section class="sd-card sd-hero u-minh-160"><div class="sd-ey">CONTROL CENTER</div><h1 class="sd-h1">Все заказы<br><span class="sd-gold">под контролем.</span></h1><p class="sd-sub">Карта курьеров, назначение заказов, клиенты, промокоды, статистика и ИИ в одной панели.</p></section>
     <div class="sd-admin-kpi"><div class="sd-kpi"><span>Клиенты</span><b id="statCustomers">0</b></div><div class="sd-kpi"><span>Курьеры</span><b id="statCouriers">0</b></div><div class="sd-kpi"><span>Заказы</span><b id="statOrders">0</b></div><div class="sd-kpi"><span>Выручка</span><b id="statRevenue">0</b></div></div>
-    <div class="sd-admin-tabs"><button class="active tab" onclick="adminTab('map',this)">⌖ Карта</button><button class="tab" onclick="adminTab('orders',this)">▣ Заказы</button><button class="tab" onclick="adminTab('customers',this)">♙ Клиенты</button><button class="tab" onclick="adminTab('couriers',this)">♧ Курьеры</button><button class="tab" onclick="adminTab('promos',this)">% Промокоды</button><button class="tab" onclick="adminTab('stats',this)">▥ Статистика</button><button class="tab" onclick="adminTab('ai',this)">✦ ИИ</button></div>
+    <div class="sd-admin-tabs"><button class="active tab" onclick="adminTab('map',this)">Карта</button><button class="tab" onclick="adminTab('orders',this)">▣ Заказы</button><button class="tab" onclick="adminTab('customers',this)">♙ Клиенты</button><button class="tab" onclick="adminTab('couriers',this)">♧ Курьеры</button><button class="tab" onclick="adminTab('promos',this)">% Промокоды</button><button class="tab" onclick="adminTab('stats',this)">▥ Статистика</button><button class="tab" onclick="adminTab('ai',this)">✦ ИИ</button></div>
     <div id="adminMapArea" class="sd-card"><div class="sd-section u-mt-0"><h2>Карта заказов</h2><span class="sd-sub">курьеры · активные точки</span></div><div class="sd-admin-map"><div id="adminCityMap" class="sd-map sd-map-large"><div class="sd-pin"><i></i></div><div class="sd-maplabel">SERTAL MAP · LIVE</div></div><div id="mapOrderList" class="sd-map-list"></div></div><span id="mapOrdersCount" class="hidden"></span><span id="mapCourierCount" class="hidden"></span></div>
     <div id="adminOrdersArea" class="sd-card hidden"></div><div id="adminCustomersArea" class="sd-card hidden"></div><div id="adminRestaurantsArea" class="hidden"></div><div id="adminPromosArea" class="sd-card hidden"></div><div id="adminCouriersArea" class="sd-card hidden"></div><div id="adminStatsArea" class="sd-card hidden"></div><div id="adminAiArea" class="sd-card hidden"></div>
    </main>
@@ -107,7 +116,7 @@
  </div>
 </div>
 
-<div id="mapPickerModal" class="sd-modal hidden"><div class="sd-modal-box"><div class="sd-modal-head"><h3>Выбор адреса на карте</h3><button class="sd-close" onclick="closeMapPicker()">×</button></div><input id="mapPickerSearch" class="sd-input" placeholder="Улица, дом, ориентир…"><div class="sd-map u-map-360"><div class="sd-pin"><i></i></div><div class="sd-maplabel">Введите адрес или используйте GPS</div></div><div class="sd-grid2 u-mt-8"><button class="sd-btn" onclick="useCurrentLocation('directAddress')">⌖ Моё местоположение</button><button class="sd-btn gold" onclick="applyMapPicker()">Готово</button></div></div></div>
+<div id="mapPickerModal" class="sd-modal hidden"><div class="sd-modal-box"><div class="sd-modal-head"><h3>Выбор адреса на карте</h3><button class="sd-close" onclick="closeMapPicker()">×</button></div><input id="mapPickerSearch" class="sd-input" placeholder="Улица, дом, ориентир…"><div class="sd-map u-map-360"><div class="sd-pin"><i></i></div><div class="sd-maplabel">Введите адрес или используйте GPS</div></div><div class="sd-grid2 u-mt-8"><button class="sd-btn" onclick="useCurrentLocation('directAddress')">Моё местоположение</button><button class="sd-btn gold" onclick="applyMapPicker()">Готово</button></div></div></div>
 
 <div id="legacyCompatibility" class="hidden">
  <input id="orderPhone"><select id="orderClientSelect"></select><div id="orderClientHint"></div><input id="orderAddress"><input id="orderTitle"><input id="orderPrice"><input id="orderWeight"><input id="orderRestaurantName"><input id="orderRestaurantAddress"><input id="orderDeadline"><input id="orderFloor"><input id="orderEntrance"><input id="orderApartment"><input id="orderIntercom"><input id="orderRecipient"><input id="orderNote"><input id="orderPayment"><input id="orderChange"><input id="orderItems">
@@ -332,7 +341,7 @@ function openAuth(mode="login"){
   document.getElementById("loginFormBox")?.classList.toggle("hidden", mode!=="login");
   document.getElementById("registerFormBox")?.classList.toggle("hidden", mode!=="register");
   document.getElementById("adminFormBox")?.classList.toggle("hidden", mode!=="admin");
-  const titles={login:["ЛИЧНЫЙ КАБИНЕТ","Войти","Введите номер телефона, добавленный в SERTAL DELIVERY."],register:["НОВЫЙ ПОКУПАТЕЛЬ","Регистрация","Создайте аккаунт бесплатно — подтверждение администратора не требуется. Вход дальше будет только по номеру телефона."],admin:["PRIVATE ADMIN","Вход администратора","Введите персональный номер и никнейм администратора."]};
+  const titles={login:["ЛИЧНЫЙ КАБИНЕТ","Войти","Введите номер телефона, добавленный в SERTAL DELIVERY."],register:["НОВЫЙ ПОКУПАТЕЛЬ","Регистрация","Создайте аккаунт бесплатно — подтверждение администратора не требуется. Вход дальше будет только по номеру телефона."],admin:["PRIVATE ADMIN","Вход администратора","Введите секретный код доступа."]};
   const t=titles[mode]||titles.login;
   document.getElementById("authEyebrow").textContent=t[0];
   document.getElementById("authTitle").textContent=t[1];
@@ -356,34 +365,25 @@ async function registerCustomer(){
   }catch(e){toast(formatError(e.message))}
 }
 
-async function adminPersonalLogin(){
-  const phone=document.getElementById("adminPhone")?.value.trim();
-  const nickname=document.getElementById("adminNickname")?.value.trim();
-  if(!phone||!nickname){toast("Введите номер и никнейм администратора");return}
+async function adminLogin(){
+  const access_code=document.getElementById("adminAccessCode")?.value.trim();
+  if(!access_code){toast("Введите секретный код");return}
   try{
-    const r=await fetch("/api/admin/personal-login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone,nickname})});
+    const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({access_code})});
     const data=await r.json();
     if(!r.ok)throw new Error(formatError(data.detail||data.message||data.error));
-    token=data.token;localStorage.setItem("sertal_delivery_token",token);localStorage.setItem("sertal_session_saved_at",String(Date.now()));closeAuth();await boot();toast("Администратор авторизован");
+    token=data.token;
+    localStorage.setItem("sertal_delivery_token",token);
+    localStorage.setItem("sertal_session_saved_at",String(Date.now()));
+    document.getElementById("adminAccessCode").value="";
+    closeAuth();
+    await boot();
   }catch(e){toast(formatError(e.message))}
 }
 
 async function login(){
   const phone=document.getElementById("loginPhone")?.value.trim();
   if(!phone){toast("Введите номер телефона");return}
-
-  // Автоматически отправляем специальные номера +777/+778/+779
-  // в персональный вход администратора, чтобы они не попадали
-  // в обычную проверку телефона.
-  const adminPhone=phone.replace(/\D/g,"");
-  const adminPhones={"777":"администратор","778":"администратор2","779":"администратор3"};
-  if(adminPhones[adminPhone]){
-    document.getElementById("adminPhone").value=phone;
-    document.getElementById("adminNickname").value=adminPhones[adminPhone];
-    openAuth("admin");
-    await adminPersonalLogin();
-    return;
-  }
 
   try{
     const data=await api("/api/login",{method:"POST",body:JSON.stringify({phone,telegram_id:telegramId()})});
@@ -627,7 +627,7 @@ function adminOrderCreateForm(){
     <div class="item luxuryCreateOrder">
         <div class="itemTop">
             <div>
-                <div class="itemTitle">＋ Новый заказ</div>
+                <div class="itemTitle">Новый заказ</div>
                 <div class="itemSub">Только адрес, что доставить и зарегистрированный клиент.</div>
             </div>
             <span class="badge blue">№ заказа создаётся автоматически</span>
@@ -699,11 +699,11 @@ function adminOrder(order){
 
     let courier =
         order.courier_name
-        ? "🛵 " +
+        ? "" +
           escapeHtml(
               order.courier_name
           )
-        : "🛵 Курьер не назначен";
+        : "Курьер не назначен";
 
 
     let location = "";
@@ -749,28 +749,28 @@ function adminOrder(order){
 
                 <div class="itemSub">
 
-                    👤 ${escapeHtml(
+                     ${escapeHtml(
                         order.customer_name ||
                         "Клиент"
                     )}
 
                     <br>
 
-                    📱 ${escapeHtml(
+                    ${escapeHtml(
                         order.customer_phone ||
                         "—"
                     )}
 
                     <br>
 
-                    📍 ${escapeHtml(
+                    ${escapeHtml(
                         order.address ||
                         "—"
                     )}
 
                     <br>
 
-                    💰 ֏${Number(
+                     ֏${Number(
                         order.price || 0
                     ).toFixed(2)}
 
@@ -802,7 +802,7 @@ function adminOrder(order){
                     class="secondary"
                     onclick="assignOrder(${order.id})"
                 >
-                    🛵 Назначить
+                    Назначить
                 </button>
                 `
                 : ""
@@ -888,7 +888,7 @@ async function createOrder(){
     if(!address){toast('Введите адрес доставки');return;}
     try{
         const r=await api('/api/admin/orders',{method:'POST',body:JSON.stringify({phone,title,address,price:0,weight_kg:0,restaurant_address:'',restaurant_name:'',delivery_deadline:'',floor:'',entrance:'',apartment:'',intercom:'',recipient_name:'',delivery_note:'',payment_note:'',items_text:title,change_amount:0})});
-        toast(`✅ Заказ #${r.id} создан${r.receipt_sent?' · чек отправлен':''}`);
+        toast(`Заказ #${r.id} создан${r.receipt_sent?' · чек отправлен':''}`);
         clearOrderDraft();
         await loadAdminOrders();
         await loadAdminStats();
@@ -971,7 +971,7 @@ async function assignOrder(orderId){
 
 
         toast(
-            "🛵 Курьер назначен"
+            "Курьер назначен"
         );
 
         await loadAdminOrders();
@@ -1009,7 +1009,7 @@ async function closeOrder(orderId){
         );
 
         toast(
-            "✅ Заказ закрыт"
+            "Заказ закрыт"
         );
 
         await loadAdminOrders();
@@ -1058,7 +1058,7 @@ async function loadAdminCustomers(){
     </div>
 
     <div class="item">
-      <div class="sectionTitle u-fs-14">🔄 Переоформить покупателя в курьера</div>
+      <div class="sectionTitle u-fs-14"> Переоформить покупателя в курьера</div>
       <div class="itemSub">Найдите номер в базе и нажмите на него. Только администратор с Telegram ID из кода может выполнить действие.</div>
       <div class="form">
         <input id="customerSearchPhone" type="tel" placeholder="Поиск по номеру телефона" oninput="filterCustomerNumbers()">
@@ -1129,19 +1129,19 @@ async function loadAdminCustomers(){
                     </div>
 
                     <div class="itemSub">
-                        📱 ${escapeHtml(c.phone)}
+                        ${escapeHtml(c.phone)}
                         <br>
                         ${
                             c.active
-                            ? "🟢 Активен"
-                            : "🔴 Удалён (логи сохранены)"
+                            ? " Активен"
+                            : " Удалён (логи сохранены)"
                         }
                     </div>
 
                     <div class="itemActions">
                         ${
                             c.active
-                            ? `<><button class="secondary" onclick="promoteCustomer(${Number(c.id)},'${escapeHtml(c.phone)}')">🛵 Сделать курьером</button><button class="danger" onclick="deleteCustomer(${Number(c.id)})">Удалить клиента</button></>`
+                            ? `<><button class="secondary" onclick="promoteCustomer(${Number(c.id)},'${escapeHtml(c.phone)}')">Сделать курьером</button><button class="danger" onclick="deleteCustomer(${Number(c.id)})">Удалить клиента</button></>`
                             : `<span class="badge">Логи сохранены</span>`
                         }
                     </div>
@@ -1173,14 +1173,14 @@ function filterCustomerNumbers(){
     if(!results)return;
     const items=[...document.querySelectorAll(".customerNumberItem")];
     const matches=items.filter(el=>(el.dataset.phone||"").replace(/\D/g,"").includes(q) || (el.dataset.name||"").toLowerCase().includes(q.toLowerCase())).slice(0,8);
-    results.innerHTML=matches.length?matches.map(el=>{const phone=el.dataset.phone; const id=el.querySelector("button.secondary")?.getAttribute("onclick")?.match(/promoteCustomer\((\d+)/)?.[1]; return id?`<button class="secondary u-full-left-7" onclick="promoteCustomer(${id},'${escapeHtml(phone)}')">📱 ${escapeHtml(phone)} — ${escapeHtml(el.dataset.name)} → сделать курьером</button>`:""}).join(""):q?'<div class="empty">Номер не найден</div>':'';
+    results.innerHTML=matches.length?matches.map(el=>{const phone=el.dataset.phone; const id=el.querySelector("button.secondary")?.getAttribute("onclick")?.match(/promoteCustomer\((\d+)/)?.[1]; return id?`<button class="secondary u-full-left-7" onclick="promoteCustomer(${id},'${escapeHtml(phone)}')">${escapeHtml(phone)} — ${escapeHtml(el.dataset.name)} → сделать курьером</button>`:""}).join(""):q?'<div class="empty">Номер не найден</div>':'';
 }
 
 async function promoteCustomer(id,phone){
     if(!confirm(`Переоформить ${phone} из покупателя в курьера?`)) return;
     try{
         await api(`/api/admin/customers/${id}/promote-courier`,{method:"POST"});
-        toast("🛵 Покупатель стал курьером и автоматически одобрен");
+        toast("Покупатель стал курьером и автоматически одобрен");
         await loadAdminCustomers();
         await loadAdminCouriers();
         await loadAdminStats();
@@ -1241,7 +1241,7 @@ async function createCustomer(){
                     })
                 }
             );
-        toast(`✅ Клиент ${data.name} добавлен. Вход — по номеру телефона.`);
+        toast(`Клиент ${data.name} добавлен. Вход — по номеру телефона.`);
 
 
         await loadAdminCustomers();
@@ -1276,7 +1276,7 @@ async function loadAdminRestaurants(){
 
 function renderAdminRestaurants(list){
  const el=document.getElementById("restaurantsList"); if(!el)return;
- el.innerHTML=list.length?list.map(r=>`<div class="item"><div class="itemTop"><div><div class="itemTitle">${escapeHtml(r.name)}</div><div class="itemSub">📍 ${escapeHtml(r.address||"Адрес не указан")}<br>📱 ${escapeHtml(r.phone||"—")}</div></div><span class="badge ${r.active?"green":"red"}">${r.active?"Активен":"Выключен"}</span></div>
+ el.innerHTML=list.length?list.map(r=>`<div class="item"><div class="itemTop"><div><div class="itemTitle">${escapeHtml(r.name)}</div><div class="itemSub">${escapeHtml(r.address||"Адрес не указан")}<br>${escapeHtml(r.phone||"—")}</div></div><span class="badge ${r.active?"green":"red"}">${r.active?"Активен":"Выключен"}</span></div>
  <div class="itemActions"><button class="secondary" onclick="toggleRestaurant(${r.id})">${r.active?"Выключить":"Включить"}</button></div>
  <div class="sectionTitle u-fs-14-mt-14">Ассортимент</div>
  ${r.items.length?r.items.map(i=>`<div class="item"><div class="itemTop"><div><b>${escapeHtml(i.name)}</b><div class="itemSub">${escapeHtml(i.description||"")}</div></div><span class="price">֏${Number(i.price).toFixed(0)}</span></div></div>`).join(""):'<div class="empty">Товаров пока нет</div>'}
@@ -1286,13 +1286,13 @@ function renderAdminRestaurants(list){
 async function createRestaurant(){
  const name=document.getElementById("newRestaurantName")?.value.trim(), address=document.getElementById("newRestaurantAddress")?.value.trim(), phone=document.getElementById("newRestaurantPhone")?.value.trim();
  if(!name){toast("Введите название ресторана");return}
- try{await api("/api/admin/restaurants",{method:"POST",body:JSON.stringify({name,address,phone})});toast("🍽 Ресторан добавлен");await loadAdminRestaurants()}catch(e){toast(formatError(e.message))}
+ try{await api("/api/admin/restaurants",{method:"POST",body:JSON.stringify({name,address,phone})});toast(" Ресторан добавлен");await loadAdminRestaurants()}catch(e){toast(formatError(e.message))}
 }
 
 async function addMenuItem(restaurantId){
  const name=document.getElementById(`menuName_${restaurantId}`)?.value.trim(), description=document.getElementById(`menuDesc_${restaurantId}`)?.value.trim(), price=Number(document.getElementById(`menuPrice_${restaurantId}`)?.value||0);
  if(!name||price<0){toast("Введите название и корректную цену");return}
- try{await api("/api/admin/restaurants/menu",{method:"POST",body:JSON.stringify({restaurant_id:restaurantId,name,description,price})});toast("🍴 Товар добавлен в ассортимент");await loadAdminRestaurants()}catch(e){toast(formatError(e.message))}
+ try{await api("/api/admin/restaurants/menu",{method:"POST",body:JSON.stringify({restaurant_id:restaurantId,name,description,price})});toast(" Товар добавлен в ассортимент");await loadAdminRestaurants()}catch(e){toast(formatError(e.message))}
 }
 
 async function toggleRestaurant(id){try{await api(`/api/admin/restaurants/${id}/toggle`,{method:"POST"});await loadAdminRestaurants()}catch(e){toast(formatError(e.message))}}
@@ -1317,7 +1317,7 @@ async function loadCustomerRestaurants(){
     if(r.items.length){
       menu=r.items.map(i=>'<label class="menuItem"><input type="checkbox" onchange="toggleCartItem('+Number(r.id)+','+Number(i.id)+',\''+escapeAttr(r.name).replace(/'/g,"&#39;")+'\','+Number(i.price)+',this.checked,\''+escapeAttr(i.name).replace(/'/g,"&#39;")+'\')"><span class="u-flex-1"><b>'+escapeHtml(i.name)+'</b>'+(i.description?'<small>'+escapeHtml(i.description)+'</small>':'')+'</span><span class="price">֏'+Number(i.price).toFixed(0)+'</span></label>').join('');
     } else menu='<div class="empty">Ассортимент пока пуст</div>';
-    return '<div class="restaurantCard"><div class="restaurantHead"><div class="u-flex-center-11"><img class="restaurantThumb" src="'+pics[idx%pics.length]+'" alt="'+escapeAttr(r.name)+'"><div><div class="restaurantName">'+escapeHtml(r.name)+'</div><div class="itemSub">📍 '+escapeHtml(r.address||"Адрес не указан")+'</div></div></div></div><div class="menuGrid">'+menu+'</div></div>';
+    return '<div class="restaurantCard"><div class="restaurantHead"><div class="u-flex-center-11"><img class="restaurantThumb" src="'+pics[idx%pics.length]+'" alt="'+escapeAttr(r.name)+'"><div><div class="restaurantName">'+escapeHtml(r.name)+'</div><div class="itemSub">'+escapeHtml(r.address||"Адрес не указан")+'</div></div></div></div><div class="menuGrid">'+menu+'</div></div>';
   }).join('');
   el.innerHTML=html; renderCartBar();
  }catch(e){toast(formatError(e.message))}
@@ -1335,19 +1335,19 @@ function renderCartBar(){
 
 function openCartCheckout(){
  const area=document.getElementById("restaurantShopArea"); const items=[...cart.items.values()]; if(!items.length)return; const total=items.reduce((a,x)=>a+x.price*x.quantity,0);
- area.innerHTML=`<div class="sectionTitle">🛒 Корзина — ${escapeHtml(cart.restaurantName)}</div>${items.map(x=>`<div class="item"><div class="itemTop"><div><b>${escapeHtml(x.name)}</b><div class="itemSub">Количество: ${x.quantity}</div></div><span class="price">֏${(x.price*x.quantity).toFixed(0)}</span></div></div>`).join("")}<div class="hero glass"><div class="statLabel">Итого</div><div id="cartTotalValue" class="statValue">֏${total.toFixed(0)}</div><div id="cartDiscountLine" class="discountLine"></div></div><div class="form"><div class="addressRow"><input id="cartAddress" placeholder="Куда доставлять · адрес"><button class="secondary locationBtn" onclick="useCurrentLocation('cartAddress')">📍 GPS</button></div><div class="itemActions u-mt-8"><button class="secondary" onclick="loadDefaultAddress('cartAddress')">Использовать мой адрес</button></div><div class="promoRow"><input id="cartPromo" placeholder="Промокод"><button class="secondary" onclick="checkCartPromo()">Применить</button></div><div class="sectionTitle u-fs-14">Способ оплаты</div><div class="paymentChoices"><button type="button" id="payCash" class="paymentChoice active" onclick="selectPayment('cash')">💵 Наличные при получении</button><button type="button" id="payOnline" class="paymentChoice" onclick="selectPayment('online')">💳 Онлайн</button></div><button class="primary" onclick="submitCartOrder()">Оформить заказ</button><button class="secondary" onclick="openRestaurantShop()">← Вернуться к ресторанам</button></div>`; window.selectedPayment="cash"; window.cartPromoCode=""; window.cartDiscount=0; loadDefaultAddress('cartAddress'); area.scrollIntoView({behavior:"smooth",block:"start"});
+ area.innerHTML=`<div class="sectionTitle"> Корзина — ${escapeHtml(cart.restaurantName)}</div>${items.map(x=>`<div class="item"><div class="itemTop"><div><b>${escapeHtml(x.name)}</b><div class="itemSub">Количество: ${x.quantity}</div></div><span class="price">֏${(x.price*x.quantity).toFixed(0)}</span></div></div>`).join("")}<div class="hero glass"><div class="statLabel">Итого</div><div id="cartTotalValue" class="statValue">֏${total.toFixed(0)}</div><div id="cartDiscountLine" class="discountLine"></div></div><div class="form"><div class="addressRow"><input id="cartAddress" placeholder="Куда доставлять · адрес"><button class="secondary locationBtn" onclick="useCurrentLocation('cartAddress')">GPS</button></div><div class="itemActions u-mt-8"><button class="secondary" onclick="loadDefaultAddress('cartAddress')">Использовать мой адрес</button></div><div class="promoRow"><input id="cartPromo" placeholder="Промокод"><button class="secondary" onclick="checkCartPromo()">Применить</button></div><div class="sectionTitle u-fs-14">Способ оплаты</div><div class="paymentChoices"><button type="button" id="payCash" class="paymentChoice active" onclick="selectPayment('cash')"> Наличные при получении</button><button type="button" id="payOnline" class="paymentChoice" onclick="selectPayment('online')"> Онлайн</button></div><button class="primary" onclick="submitCartOrder()">Оформить заказ</button><button class="secondary" onclick="openRestaurantShop()">← Вернуться к ресторанам</button></div>`; window.selectedPayment="cash"; window.cartPromoCode=""; window.cartDiscount=0; loadDefaultAddress('cartAddress'); area.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function selectPayment(method){window.selectedPayment=method;document.getElementById("payCash")?.classList.toggle("active",method==="cash");document.getElementById("payOnline")?.classList.toggle("active",method==="online")}
 async function checkCartPromo(){ const code=document.getElementById("cartPromo")?.value.trim(); const total=[...cart.items.values()].reduce((a,x)=>a+x.price*x.quantity,0); if(!code){toast("Введите промокод");return;} try{const r=await api("/api/customer/promo/check",{method:"POST",body:JSON.stringify({code,total})}); window.cartPromoCode=r.code; window.cartDiscount=Number(r.discount||0); document.getElementById("cartTotalValue").textContent="֏"+Number(r.total).toFixed(0); document.getElementById("cartDiscountLine").textContent="Скидка: −֏"+window.cartDiscount.toFixed(0)+" · "+r.code; toast("Промокод применён");}catch(e){window.cartPromoCode="";window.cartDiscount=0;toast(formatError(e.message))} }
 async function submitCartOrder(){
  const address=document.getElementById("cartAddress")?.value.trim(); if(!address){toast("Введите адрес доставки или нажмите GPS");return} const items=[...cart.items.values()].map(x=>({menu_item_id:x.menu_item_id,quantity:x.quantity}));
- try{const r=await api("/api/customer/orders/from-cart",{method:"POST",body:JSON.stringify({restaurant_id:cart.restaurantId,items,address,payment_method:window.selectedPayment||"cash",delivery_note:"",promo_code:window.cartPromoCode||""})}); await saveDefaultAddressValue(address); toast(`✅ Заказ #${r.order_id} оформлен · ֏${Number(r.total).toFixed(0)}`); cart={restaurantId:null,restaurantName:"",items:new Map()}; await loadCustomer();}catch(e){toast(formatError(e.message))}
+ try{const r=await api("/api/customer/orders/from-cart",{method:"POST",body:JSON.stringify({restaurant_id:cart.restaurantId,items,address,payment_method:window.selectedPayment||"cash",delivery_note:"",promo_code:window.cartPromoCode||""})}); await saveDefaultAddressValue(address); toast(`Заказ #${r.order_id} оформлен · ֏${Number(r.total).toFixed(0)}`); cart={restaurantId:null,restaurantName:"",items:new Map()}; await loadCustomer();}catch(e){toast(formatError(e.message))}
 }
 
 async function saveDefaultAddressValue(address,lat=null,lon=null){ try{await api("/api/customer/address",{method:"POST",body:JSON.stringify({address:String(address||""),lat,lon})}); localStorage.setItem("sertal_default_address",String(address||""));}catch(e){console.log("address save",e)} }
-async function saveDefaultAddress(inputId="buyerAddress"){ const input=document.getElementById(inputId); const address=input?.value.trim()||""; if(!address){toast("Введите адрес");return} await saveDefaultAddressValue(address); toast("📍 Адрес сохранён"); }
+async function saveDefaultAddress(inputId="buyerAddress"){ const input=document.getElementById(inputId); const address=input?.value.trim()||""; if(!address){toast("Введите адрес");return} await saveDefaultAddressValue(address); toast("Адрес сохранён"); }
 async function loadDefaultAddress(inputId="buyerAddress"){ try{const r=await api("/api/customer/address"); const address=r.address||localStorage.getItem("sertal_default_address")||""; const el=document.getElementById(inputId); if(el && !el.value)el.value=address;}catch(e){const el=document.getElementById(inputId);if(el&&!el.value)el.value=localStorage.getItem("sertal_default_address")||""} }
-function useCurrentLocation(inputId="buyerAddress"){ if(!navigator.geolocation){toast("Геолокация недоступна");return} toast("Определяю местоположение…"); navigator.geolocation.getCurrentPosition(async pos=>{ const lat=pos.coords.latitude,lon=pos.coords.longitude; const el=document.getElementById(inputId); let address=el?.value?.trim()||""; try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,{headers:{"Accept":"application/json"}}); const j=await r.json(); address=j.display_name||address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;}catch(e){address=address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;} if(el)el.value=address; await saveDefaultAddressValue(address,lat,lon); toast("📍 Адрес определён и сохранён");},()=>toast("Не удалось получить геолокацию. Разрешите доступ к GPS."),{enableHighAccuracy:true,timeout:10000,maximumAge:60000}); }
+function useCurrentLocation(inputId="buyerAddress"){ if(!navigator.geolocation){toast("Геолокация недоступна");return} toast("Определяю местоположение…"); navigator.geolocation.getCurrentPosition(async pos=>{ const lat=pos.coords.latitude,lon=pos.coords.longitude; const el=document.getElementById(inputId); let address=el?.value?.trim()||""; try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,{headers:{"Accept":"application/json"}}); const j=await r.json(); address=j.display_name||address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;}catch(e){address=address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;} if(el)el.value=address; await saveDefaultAddressValue(address,lat,lon); toast("Адрес определён и сохранён");},()=>toast("Не удалось получить геолокацию. Разрешите доступ к GPS."),{enableHighAccuracy:true,timeout:10000,maximumAge:60000}); }
 
 /* =========================================================
    COURIERS
@@ -1439,21 +1439,21 @@ async function loadAdminCouriers(){
 
                             <div class="itemSub">
 
-                                📱 ${escapeHtml(c.phone)}
+                                ${escapeHtml(c.phone)}
 
                                 <br>
 
                                 ${
                                     c.approved
-                                    ? "🟢 Одобрен"
-                                    : "🟡 Ожидает одобрения"
+                                    ? " Одобрен"
+                                    : " Ожидает одобрения"
                                 }
 
                                 <br>
 
                                 ${
                                     c.online
-                                    ? "🟢 Онлайн"
+                                    ? " Онлайн"
                                     : "⚫ Офлайн"
                                 }
 
@@ -1582,7 +1582,7 @@ async function createCourier(){
                     })
                 }
             );
-        toast(`✅ Курьер ${data.name} добавлен. Вход — по номеру телефона · требуется одобрение`);
+        toast(`Курьер ${data.name} добавлен. Вход — по номеру телефона · требуется одобрение`);
 
 
         await loadAdminCouriers();
@@ -1610,7 +1610,7 @@ async function approveCourier(id){
         );
 
         toast(
-            "✅ Курьер одобрен"
+            "Курьер одобрен"
         );
 
         await loadAdminCouriers();
@@ -1738,7 +1738,7 @@ async function loadAdminStatsPage(){
 
         area.innerHTML = `
             <div class="empty">
-                ❌ ${escapeHtml(
+                ${escapeHtml(
                     formatError(
                         error.message
                     )
@@ -1778,8 +1778,8 @@ async function loadAdminMap(){
                 <div id="mapOrderList" class="mapOrderList"><div class="empty">Загрузка...</div></div>
             </aside>
             <main class="mapCanvas">
-                <div class="mapOverlay"><div class="mapChip">📦 <b id="mapOrdersCount">0</b> заказов</div><div class="mapChip">🛵 <b id="mapCourierCount">0</b> курьеров</div><div class="mapChip">📍 <b>Ереван</b></div></div>
-                <div class="mapToolbar"><button class="mapTool" type="button" onclick="centerYerevan()">⌖ Ереван</button><button class="mapTool" type="button" onclick="refreshLiveMap()">↻ Обновить</button><button class="mapTool" type="button" onclick="toggleMapFullscreen()">⛶ На весь экран</button></div>
+                <div class="mapOverlay"><div class="mapChip"><b id="mapOrdersCount">0</b> заказов</div><div class="mapChip"><b id="mapCourierCount">0</b> курьеров</div><div class="mapChip"><b>Ереван</b></div></div>
+                <div class="mapToolbar"><button class="mapTool" type="button" onclick="centerYerevan()">Ереван</button><button class="mapTool" type="button" onclick="refreshLiveMap()">↻ Обновить</button><button class="mapTool" type="button" onclick="toggleMapFullscreen()">⛶ На весь экран</button></div>
                 <div id="adminCityMap"></div>
             </main></div>`;
         initAdminMap();area.dataset.ready="1";setTimeout(()=>adminMap?.invalidateSize(),80);
@@ -1810,14 +1810,14 @@ async function refreshLiveMap(){
             const st=statusInfo(o.status);
             const marker=L.circleMarker([lat,lon],{radius:9,weight:3,fillOpacity:.9,color:"#d4af37",fillColor:"#d4af37"}).addTo(adminMap);
             marker.__orderId=Number(o.id);
-            marker.bindPopup(`<b>Заказ #${Number(o.id)}</b><br>${escapeHtml(o.title||"Заказ")}<br>📍 ${escapeHtml(o.address||"Адрес не указан")}<br>${st.icon} ${st.text}`);
+            marker.bindPopup(`<b>Заказ #${Number(o.id)}</b><br>${escapeHtml(o.title||"Заказ")}<br>${escapeHtml(o.address||"Адрес не указан")}<br>${st.icon} ${st.text}`);
             adminMapMarkers.push(marker);
         });
         couriers.forEach(c=>{
             const lat=Number(c.lat), lon=Number(c.lon);
             if(!Number.isFinite(lat)||!Number.isFinite(lon)) return;
             const marker=L.circleMarker([lat,lon],{radius:8,weight:3,fillOpacity:.95,color:"#f0cf63",fillColor:"#11100d"}).addTo(adminMap);
-            marker.bindPopup(`<b>🛵 ${escapeHtml(c.name||"Курьер")}</b><br>${c.online?"Онлайн":"Офлайн"}`);
+            marker.bindPopup(`<b>${escapeHtml(c.name||"Курьер")}</b><br>${c.online?"Онлайн":"Офлайн"}`);
             courierMapMarkers.set(c.id,marker);
         });
 
@@ -1828,7 +1828,7 @@ async function refreshLiveMap(){
                   return `<div class="mapOrder" onclick="focusMapOrder(${Number(o.id)})">
                     <div class="mapOrderTop"><span class="mapOrderId">#${Number(o.id)}</span><span class="badge ${st.class}">${st.icon} ${st.text}</span></div>
                     <div class="mapOrderTitle">${escapeHtml(o.title||"Заказ")}</div>
-                    <div class="mapOrderMeta">📍 ${escapeHtml(o.address||"Адрес не указан")}<br>🛵 ${escapeHtml(o.courier_name||"Не назначен")}</div>
+                    <div class="mapOrderMeta">${escapeHtml(o.address||"Адрес не указан")}<br>${escapeHtml(o.courier_name||"Не назначен")}</div>
                   </div>`;
                 }).join("")
               : '<div class="empty">Активных заказов нет</div>';
@@ -1858,7 +1858,7 @@ async function loadAdminAI(){
     if(!area) return;
 
     area.innerHTML = `
-        <div class="sectionTitle">🤖 ИИ-помощник</div>
+        <div class="sectionTitle"> ИИ-помощник</div>
         <div class="itemSub">Помощник анализирует заказы, вес, доплаты и правила группировки.</div>
         <div id="aiChat" class="aiChat">
             <div class="aiMsg aiBot">Привет! Спроси, например: «Сколько сейчас заказов?» или «Какие правила для второго заказа?»</div>
@@ -1892,7 +1892,7 @@ async function askAdminAI(){
         chat.scrollTop = chat.scrollHeight;
     }catch(error){
         chat.insertAdjacentHTML("beforeend",
-            `<div class="aiMsg aiBot">❌ ${escapeHtml(formatError(error.message))}</div>`
+            `<div class="aiMsg aiBot">${escapeHtml(formatError(error.message))}</div>`
         );
     }
 }
@@ -1900,6 +1900,13 @@ async function askAdminAI(){
 /* =========================================================
    SUPPORT / HISTORY
 ========================================================= */
+let supportFastTimer=null;
+function startSupportFastRefresh(){
+    if(supportFastTimer) return;
+    supportFastTimer=setInterval(()=>{
+        if(document.visibilityState!=="hidden" && document.getElementById("supportChat")) refreshSupportChat();
+    },1500);
+}
 async function refreshSupportChat(){
     const box=document.getElementById("supportChat");
     if(!box)return;
@@ -1920,8 +1927,9 @@ async function contactAdmin(){
     const panel=document.getElementById("customerSupportArea");
     if(panel && role==="customer"){
         panel.classList.remove("hidden");
-        panel.innerHTML=`<div class="sectionTitle">💬 Поддержка SERTAL</div><div class="itemSub u-mb-9">Ваше сообщение сразу уходит в рабочую Telegram-группу поддержки.</div><div id="supportChat" class="chatBox"></div><div class="supportComposer"><input id="supportInput" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendSupportMessage()}"><button class="goldBtn" onclick="sendSupportMessage()">Отправить</button></div>`;
+        panel.innerHTML=`<div class="sectionTitle">Поддержка SERTAL</div><div class="itemSub u-mb-9">Ваше сообщение сразу уходит в рабочую Telegram-группу поддержки.</div><div id="supportChat" class="chatBox"></div><div class="supportComposer"><input id="supportInput" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendSupportMessage()}"><button class="goldBtn" onclick="sendSupportMessage()">Отправить</button></div>`;
         await refreshSupportChat();
+        startSupportFastRefresh();
         panel.scrollIntoView({behavior:"smooth",block:"start"});
         return;
     }
@@ -1929,7 +1937,7 @@ async function contactAdmin(){
     if(!box){
         const host=document.getElementById(role==="courier"?"courierOrdersArea":"customerOrdersArea");
         if(!host)return;
-        host.insertAdjacentHTML("beforebegin",`<div class="section glass"><div class="sectionTitle">💬 Поддержка</div><div id="supportChat" class="chatBox"></div><div class="form u-mt-10"><input id="supportInput" placeholder="Сообщение поддержке" onkeydown="if(event.key==='Enter'){event.preventDefault();sendSupportMessage()}"><button class="primary" onclick="sendSupportMessage()">Отправить</button></div></div>`);
+        host.insertAdjacentHTML("beforebegin",`<div class="section glass"><div class="sectionTitle">Поддержка</div><div id="supportChat" class="chatBox"></div><div class="form u-mt-10"><input id="supportInput" placeholder="Сообщение поддержке" onkeydown="if(event.key==='Enter'){event.preventDefault();sendSupportMessage()}"><button class="primary" onclick="sendSupportMessage()">Отправить</button></div></div>`);
     }
     await refreshSupportChat();
     document.getElementById("supportChat")?.parentElement?.scrollIntoView({behavior:"smooth",block:"start"});
@@ -1960,16 +1968,6 @@ async function loadCourierSchedule(){
         area.innerHTML=`<div class="sectionTitle">График</div><div class="item">Сегодня активных доставок: <b>${orders.length}</b></div>${orders.map(courierOrder).join("")}`;
         area.scrollIntoView({behavior:"smooth",block:"start"});
     }catch(e){toast(formatError(e.message))}
-}
-async function contactAdmin(){
-    let box=document.getElementById("supportChat");
-    if(!box){
-        const host=document.getElementById(role==="courier"?"courierOrdersArea":"customerOrdersArea");
-        if(!host)return;
-        host.insertAdjacentHTML("beforebegin",`<div class="section glass"><div class="sectionTitle">Поддержка</div><div id="supportChat" class="u-chat-scroll"></div><div class="form u-mt-10"><input id="supportInput" placeholder="Сообщение поддержке" onkeydown="if(event.key==='Enter'){event.preventDefault();sendSupportMessage()}"><button class="primary" onclick="sendSupportMessage()">Отправить</button></div></div>`);
-    }
-    await refreshSupportChat();
-    document.getElementById("supportChat")?.parentElement?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 /* =========================================================
@@ -2013,7 +2011,7 @@ function buyerPage(page,btn){
     }
     if(page==="profile"){
         prof?.classList.remove("hidden");
-        if(prof) prof.innerHTML=`<div class="buyerWelcome profileHero"><div class="profileAvatar">${escapeHtml((currentUser?.name||"S").slice(0,1).toUpperCase())}</div><div><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h2>${escapeHtml(currentUser?.name||"Профиль")}</h2><p>${escapeHtml(currentUser?.phone||"—")}</p></div></div><div class="addressCard"><div class="sectionTitle">📍 Адрес по умолчанию</div><div class="addressRow"><input id="profileAddress" placeholder="Ваш адрес"><button class="secondary locationBtn" onclick="useCurrentLocation('profileAddress')">GPS</button></div><button class="goldBtn u-mt-9-full" onclick="saveDefaultAddress('profileAddress')">Сохранить адрес</button></div><div class="section glass profileLinks"><div class="sectionTitle">Аккаунт</div><button class="secondary" onclick="contactAdmin()">💬 Поддержка</button><button class="secondary" onclick="logout()">↪ Выйти</button></div>`; loadDefaultAddress('profileAddress');
+        if(prof) prof.innerHTML=`<div class="buyerWelcome profileHero"><div class="profileAvatar">${escapeHtml((currentUser?.name||"S").slice(0,1).toUpperCase())}</div><div><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h2>${escapeHtml(currentUser?.name||"Профиль")}</h2><p>${escapeHtml(currentUser?.phone||"—")}</p></div></div><div class="addressCard"><div class="sectionTitle">Адрес по умолчанию</div><div class="addressRow"><input id="profileAddress" placeholder="Ваш адрес"><button class="secondary locationBtn" onclick="useCurrentLocation('profileAddress')">GPS</button></div><button class="goldBtn u-mt-9-full" onclick="saveDefaultAddress('profileAddress')">Сохранить адрес</button></div><div class="section glass profileLinks"><div class="sectionTitle">Аккаунт</div><button class="secondary" onclick="contactAdmin()">Поддержка</button><button class="secondary" onclick="logout()">Выйти</button></div>`; loadDefaultAddress('profileAddress');
     }
 }
 function openDirectDelivery(){
@@ -2041,13 +2039,13 @@ async function searchGoogle(forced){
     const q=String(forced??document.getElementById("buyerGoogleSearch")?.value??document.getElementById("buyerDiscoverSearch")?.value??"").trim();
     if(!q){toast("Введите запрос для поиска");return;}
     const target=document.getElementById("buyerSearchResults")||document.getElementById("buyerDiscoverResults");
-    if(target) target.innerHTML=`<div class="empty">🤖 Gemini ищет в интернете…</div>`;
+    if(target) target.innerHTML=`<div class="empty"> Gemini ищет в интернете…</div>`;
     try{
         const data=await api(`/api/customer/search?q=${encodeURIComponent(q)}`);
         const sources=Array.isArray(data.sources)?data.sources:[];
         let html=`<div class="buyerSectionTitle"><h3>Результат ИИ-поиска</h3><span>${escapeHtml(q)}</span></div>`;
         if(data.answer){
-            html+=`<div class="item glass"><b>🤖 Gemini</b><p class="u-pre">${escapeHtml(data.answer)}</p>${data.grounded?'<small>🔎 Ответ проверен через Google Search</small>':''}</div>`;
+            html+=`<div class="item glass"><b> Gemini</b><p class="u-pre">${escapeHtml(data.answer)}</p>${data.grounded?'<small> Ответ проверен через Google Search</small>':''}</div>`;
         }
         if(sources.length){
             html+=`<div class="buyerSectionTitle"><h3>Источники</h3><span>${sources.length}</span></div>`;
@@ -2113,7 +2111,7 @@ async function loadCustomer(){
 
         area.innerHTML = `
             <div class="empty">
-                ❌ ${escapeHtml(
+                ${escapeHtml(
                     formatError(
                         error.message
                     )
@@ -2169,11 +2167,11 @@ function customerOrder(order){
                 </div>
 
                 <div class="itemSub">
-                    📍 ${escapeHtml(
+                    ${escapeHtml(
                         order.address || ""
                     )}
                     <br>
-                    💰 ֏${Number(
+                     ֏${Number(
                         order.price || 0
                     ).toFixed(2)}
                 </div>
@@ -2199,7 +2197,7 @@ function customerOrder(order){
                     class="primary"
                     onclick="confirmReceipt(${order.id})"
                 >
-                    ✅ Подтвердить получение
+                    Подтвердить получение
                 </button>
 
             </div>
@@ -2225,7 +2223,7 @@ async function confirmReceipt(id){
         );
 
         toast(
-            "✅ Получение подтверждено"
+            "Получение подтверждено"
         );
 
         await loadCustomer();
@@ -2329,32 +2327,32 @@ function courierOrder(order){
 
                 <div class="itemSub">
 
-                    👤 ${escapeHtml(
+                     ${escapeHtml(
                         order.customer_name || ""
                     )}
 
                     <br>
 
-                    📱 ${escapeHtml(
+                    ${escapeHtml(
                         order.customer_phone || ""
                     )}
 
                     <br>
 
-                    📍 ${escapeHtml(
+                    ${escapeHtml(
                         order.address || ""
                     )}
 
                     <br>
 
-                    💰 ֏${Number(
+                     ֏${Number(
                         order.price || 0
                     ).toFixed(2)}
                     <br>
                     ⚖️ ${Number(order.weight_kg || 0).toFixed(1)} кг
                     ${
                         Number(order.courier_bonus_amd || 0) > 0
-                        ? `<br>💵 +${Number(order.courier_bonus_amd)} AMD к оплате курьеру`
+                        ? `<br> +${Number(order.courier_bonus_amd)} AMD к оплате курьеру`
                         : ""
                     }
 
@@ -2396,7 +2394,7 @@ function courierOrder(order){
                     class="blue"
                     onclick="courierStart(${order.id})"
                 >
-                    🚚 Начать доставку
+                    Начать доставку
                 </button>
                 `
 
@@ -2412,7 +2410,7 @@ function courierOrder(order){
                     class="primary"
                     onclick="courierComplete(${order.id})"
                 >
-                    ✅ Доставлено
+                    Доставлено
                 </button>
                 `
 
@@ -2545,7 +2543,7 @@ async function courierStart(id){
         );
 
         toast(
-            "🚚 Доставка начата"
+            "Доставка начата"
         );
 
         await loadCourier();
@@ -2573,7 +2571,7 @@ async function courierComplete(id){
         );
 
         toast(
-            "✅ Заказ отмечен как доставленный"
+            "Заказ отмечен как доставленный"
         );
 
         await loadCourier();
@@ -2663,37 +2661,37 @@ function statusInfo(status){
 
         new:{
             text:"Новый",
-            icon:"🆕",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/new.png" alt="">',
             class:"orange"
         },
 
         assigned:{
             text:"Назначен",
-            icon:"🛵",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/motorcycle.png" alt="">',
             class:"orange"
         },
 
         accepted:{
             text:"Принят",
-            icon:"✓",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/checked.png" alt="">',
             class:"blue"
         },
 
         delivering:{
             text:"Доставляется",
-            icon:"🚚",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/delivery-truck.png" alt="">',
             class:"blue"
         },
 
         delivered:{
             text:"Доставлен",
-            icon:"✅",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/checked.png" alt="">',
             class:"green"
         },
 
         closed:{
             text:"Закрыт",
-            icon:"✕",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/cancel.png" alt="">',
             class:"red"
         }
 
@@ -2706,7 +2704,7 @@ function statusInfo(status){
             text:
                 status ||
                 "Неизвестно",
-            icon:"•",
+            icon:'<img class="remote-status-icon" src="https://img.icons8.com/fluency/48/info.png" alt="">',
             class:""
         }
     );
@@ -2757,7 +2755,7 @@ setInterval(async()=>{
             await refreshSupportChat();
         }
     }catch(error){console.log("Auto refresh:",error.message)}
-},15000);
+},4000);
 
 
 window.addEventListener("pagehide",()=>{ try{captureOrderDraft();}catch(e){} });
@@ -2819,113 +2817,6 @@ const _v2Update=typeof updateCourierOnlineUI==='function'?updateCourierOnlineUI:
 function updateCourierOnlineUI(){try{_v2Update&&_v2Update()}catch(e){}const on=!!courierOnline,s=document.getElementById('courierOnlineStatus');if(s){s.classList.toggle('off',!on);s.innerHTML='<i></i><span>'+ (on?'ОНЛАЙН':'ОФЛАЙН')+'</span>'}const b=document.getElementById('courierOnlineBtn');if(b){b.textContent=on?'Онлайн':'Офлайн';b.classList.toggle('gold',on)}}
 function buyerPage(page){showCustomerScreen({home:'home',orders:'orders',promos:'promos',profile:'profile',discover:'discover'}[page]||'home')}
 document.addEventListener('DOMContentLoaded',()=>{sdAuthTab('login');document.getElementById('loginPhone')?.addEventListener('keydown',e=>{if(e.key==='Enter')login()})});
-
-/* =========================================================
-   REMOTE UI ICONS — NO EMOJI / NO TEXT PICTOGRAMS
-   Uses real image assets loaded from the web.
-========================================================= */
-const REMOTE_UI_ICON_BASE = "https://img.icons8.com/ios-filled/48/FFFFFF/";
-const REMOTE_UI_ICONS = {
-  "⌖":"map-marker.png",
-  "＋":"plus-math.png",
-  "◌":"chat.png",
-  "↪":"logout-rounded.png",
-  "⌂":"home.png",
-  "▣":"purchase-order.png",
-  "♙":"user.png",
-  "♧":"delivery.png",
-  "✦":"sparkling.png",
-  "⌕":"search.png",
-  "‹":"chevron-left.png",
-  "×":"close.png",
-  "◷":"clock.png",
-  "↻":"refresh.png",
-  "⛶":"fullscreen.png",
-  "📍":"map-marker.png",
-  "📱":"phone.png",
-  "🛵":"scooter.png",
-  "🚚":"truck.png",
-  "💰":"money-bag.png",
-  "🤖":"bot.png",
-  "💬":"chat.png",
-  "📦":"package.png",
-  "📎":"attach.png",
-  "📊":"statistics.png",
-  "✅":"checkmark.png",
-  "❌":"cancel.png",
-  "🔎":"search.png",
-  "🍽":"restaurant.png"
-};
-
-function remoteUiIcon(symbol, alt=""){
-  const file = REMOTE_UI_ICONS[symbol];
-  if(!file) return null;
-  const img=document.createElement("img");
-  img.className="remote-ui-icon";
-  img.src=REMOTE_UI_ICON_BASE + file;
-  img.alt=alt || "";
-  img.setAttribute("aria-hidden", alt ? "false" : "true");
-  img.loading="lazy";
-  return img;
-}
-
-function replaceRemoteUiIcons(root=document.body){
-  if(!root) return;
-  const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const nodes=[];
-  let n;
-  while((n=walker.nextNode())){
-    const p=n.parentElement;
-    if(!p || p.closest("script,style,template,textarea")) continue;
-    if(!/[⌖＋◌↪⌂▣♙♧✦⌕‹×◷↻⛶📍📱🛵🚚💰🤖💬📦📎📊✅❌🔎🍽]/u.test(n.nodeValue)) continue;
-    nodes.push(n);
-  }
-  for(const node of nodes){
-    let text=node.nodeValue || "";
-    const frag=document.createDocumentFragment();
-    while(text){
-      let bestIndex=text.length, bestSymbol=null;
-      for(const symbol of Object.keys(REMOTE_UI_ICONS)){
-        const i=text.indexOf(symbol);
-        if(i!==-1 && i<bestIndex){ bestIndex=i; bestSymbol=symbol; }
-      }
-      if(!bestSymbol){ frag.appendChild(document.createTextNode(text)); break; }
-      if(bestIndex>0) frag.appendChild(document.createTextNode(text.slice(0,bestIndex)));
-      const img=remoteUiIcon(bestSymbol, bestSymbol);
-      if(img) frag.appendChild(img); else frag.appendChild(document.createTextNode(bestSymbol));
-      text=text.slice(bestIndex+bestSymbol.length);
-    }
-    node.parentNode?.replaceChild(frag,node);
-  }
-
-  // Percentage symbols are icons only when used as dedicated UI badges.
-  root.querySelectorAll?.(".pct, .promoOrb").forEach(el=>{
-    if(el.dataset.remoteIconDone) return;
-    const text=(el.textContent||"").trim();
-    if(text==="%"){
-      const img=remoteUiIcon("✦","Promo");
-      if(img){ img.src=REMOTE_UI_ICON_BASE+"discount.png"; img.alt="Промо"; el.replaceChildren(img); }
-    }
-    el.dataset.remoteIconDone="1";
-  });
-}
-
-const remoteUiObserver = new MutationObserver((mutations)=>{
-  for(const m of mutations){
-    for(const node of m.addedNodes){
-      if(node.nodeType===Node.TEXT_NODE){
-        const parent=node.parentElement;
-        if(parent) replaceRemoteUiIcons(parent);
-      }else if(node.nodeType===Node.ELEMENT_NODE){
-        replaceRemoteUiIcons(node);
-      }
-    }
-    if(m.type==="characterData" && m.target?.parentElement) replaceRemoteUiIcons(m.target.parentElement);
-  }
-});
-remoteUiObserver.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
-window.addEventListener("DOMContentLoaded",()=>replaceRemoteUiIcons(document.body));
-
 </script>
 
 <script>boot();</script>
