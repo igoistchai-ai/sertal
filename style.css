@@ -621,27 +621,38 @@ body:after{
 
 .u-fs-10{font-size:10px!important}.u-m-0{margin:0!important}.u-left-mt7{text-align:left;margin-top:7px!important}.u-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
 
-
-/* =========================================================
-   REMOTE IMAGE ICONS
-========================================================= */
-.remote-ui-icon{
-  width:18px;
-  height:18px;
-  object-fit:contain;
-  display:inline-block;
-  vertical-align:middle;
-  flex:0 0 18px;
-  filter:drop-shadow(0 2px 8px rgba(255,179,71,.18));
-  user-select:none;
-  -webkit-user-drag:none;
+/* SERTAL FUTURISTIC GLASS OVERRIDES */
+:root{
+  --glass-bg:rgba(17,21,28,.58);
+  --glass-bg-strong:rgba(10,14,20,.78);
+  --glass-line:rgba(255,255,255,.11);
+  --glass-blue:#6eb6ff;
+  --glass-gold:#e7c96a;
 }
-.sd-icon .remote-ui-icon,
-.sd-back .remote-ui-icon,
-.sd-close .remote-ui-icon{width:19px;height:19px;flex-basis:19px}
-.sd-action i .remote-ui-icon,
-.sd-order-icon .remote-ui-icon,
-.pct .remote-ui-icon,
-.promoOrb .remote-ui-icon{width:22px;height:22px;flex-basis:22px}
-.sd-side button .remote-ui-icon{width:17px;height:17px;flex-basis:17px}
-button .remote-ui-icon{pointer-events:none}
+body,.publicHome,#app{
+  background:
+    radial-gradient(circle at 12% 8%,rgba(89,159,255,.12),transparent 28%),
+    radial-gradient(circle at 88% 12%,rgba(231,201,106,.09),transparent 25%),
+    #070a0f !important;
+}
+.glass,.sd-login,.sd-launch-copy,.authCard,.section,.item,.topbar,.sd-top{
+  background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025)) !important;
+  border:1px solid var(--glass-line) !important;
+  box-shadow:0 24px 80px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.045) !important;
+  backdrop-filter:blur(26px) saturate(135%) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(135%) !important;
+}
+.sd-launch-copy{
+  background-image:linear-gradient(180deg,rgba(5,8,12,.28),rgba(5,8,12,.9)),url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1800&q=82') !important;
+  background-size:cover !important;background-position:center !important;
+}
+.sd-launch-copy:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(8,12,18,.84),rgba(8,12,18,.28));pointer-events:none}
+.sd-launch-copy>*{position:relative;z-index:2}
+.sd-login{background:linear-gradient(145deg,rgba(18,24,33,.72),rgba(7,10,15,.8)) !important}
+.sd-auth-tabs{background:rgba(0,0,0,.28) !important;border:1px solid rgba(255,255,255,.07)}
+.sd-auth-tabs button.active{background:rgba(110,182,255,.14) !important;color:#fff !important;box-shadow:inset 0 0 0 1px rgba(110,182,255,.2)}
+.sd-input,input,textarea,select{background:rgba(5,9,14,.62) !important;border:1px solid rgba(255,255,255,.1) !important;color:#f5f8fc !important;box-shadow:inset 0 1px rgba(255,255,255,.03)}
+.sd-btn.gold,.goldBtn,.primary{background:linear-gradient(135deg,#e7c96a,#b8953f) !important;color:#090b0e !important;box-shadow:0 10px 30px rgba(231,201,106,.16)}
+.sd-btn:not(.gold),.secondary{background:rgba(255,255,255,.055) !important;border:1px solid rgba(255,255,255,.1) !important;color:#eaf0f7 !important}
+.remote-status-icon{width:18px;height:18px;object-fit:contain;vertical-align:-4px;filter:drop-shadow(0 4px 10px rgba(110,182,255,.22))}
+@media(max-width:760px){.sd-launch-shell{grid-template-columns:1fr}.sd-launch-copy{min-height:430px;padding:28px}.sd-login{margin-top:-2px}.sd-title{font-size:54px}}
