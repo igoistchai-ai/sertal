@@ -45,7 +45,7 @@
   <section id="customerView" class="hidden">
    <div id="customerScreenHome" class="sd-screen active">
     <section class="sd-card sd-hero"><div class="sd-hero-top"><div><div class="sd-ey">PERSONAL DELIVERY APP</div><h1 class="sd-h1">Доставка<br><span class="sd-gold">без лишнего.</span></h1><p class="sd-sub">Отправьте посылку, документы или покупки. SERTAL покажет маршрут и статус заказа.</p></div><div class="sd-badge">SERTAL<br>24/7</div></div><div class="u-hero-actions"><button class="sd-btn gold" onclick="showCustomerScreen('create')">Создать доставку</button><button class="sd-btn" onclick="showCustomerScreen('orders')">Мои заказы</button></div></section>
-    <div class="sd-actions"><button class="sd-action" onclick="showCustomerScreen('create')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/plus.png" alt="" aria-hidden="true"><span><b>Новая доставка</b><span>Создать заказ за минуту</span></span></button><button class="sd-action" onclick="showCustomerScreen('orders')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/marker.png" alt="" aria-hidden="true"><span><b>Трекинг</b><span>Где курьер?</span></span></button><button class="sd-action" onclick="showCustomerScreen('promos')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/discount.png" alt="" aria-hidden="true"><span><b>Промокоды</b><span>Скидки SERTAL</span></span></button><button class="sd-action" onclick="contactAdmin()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/online-support.png" alt="" aria-hidden="true"><span><b>Поддержка</b><span>Ответим в чате</span></span></button></div>
+    <div class="sd-actions"><button class="sd-action" onclick="showCustomerScreen('create')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/plus.png" alt="" aria-hidden="true"><span><b>Новая доставка</b><span>Создать заказ за минуту</span></span></button><button class="sd-action" onclick="showCustomerScreen('orders')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/marker.png" alt="" aria-hidden="true"><span><b>Трекинг</b><span>Где курьер?</span></span></button><button class="sd-action" onclick="contactAdmin()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/online-support.png" alt="" aria-hidden="true"><span><b>Поддержка</b><span>Ответим в чате</span></span></button></div>
     <div class="sd-section"><h2>Текущая доставка</h2><button onclick="showCustomerScreen('orders')">Все →</button></div><div id="customerHomeCurrent" class="sd-card soft"><div class="sd-sub">Загрузка…</div></div>
     <div class="sd-section"><h2>Мой адрес</h2><button onclick="showCustomerScreen('profile')">Изменить</button></div><div class="sd-card soft"><label class="sd-label">Адрес по умолчанию</label><div class="sd-wrap"><input id="buyerAddress" class="sd-input" placeholder="Ереван, улица, дом…"><button class="sd-btn small sd-gps" onclick="useCurrentLocation('buyerAddress')">GPS</button></div><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('buyerAddress')">Сохранить адрес</button></div>
     <div class="sd-section"><h2>Интернет + ИИ</h2><button onclick="showCustomerScreen('discover')">Открыть</button></div><div class="sd-card soft"><div class="sd-promo"><input id="buyerGoogleSearch" class="sd-input" placeholder="Найти что-нибудь в интернете…" onkeydown="if(event.key==='Enter')searchGoogle()"><button class="sd-btn gold" onclick="searchGoogle()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/search.png" alt="" aria-hidden="true"></button></div><div id="buyerSearchResults"></div></div>
@@ -58,7 +58,7 @@
      <div class="sd-section"><h2>Получатель</h2></div><div class="sd-grid2"><div class="sd-field"><label class="sd-label">Имя</label><input id="directRecipient" class="sd-input" placeholder="Имя"></div><div class="sd-field"><label class="sd-label">Телефон</label><input id="directRecipientPhone" class="sd-input" placeholder="+374…"></div></div>
      <div class="sd-field"><label class="sd-label">Что доставить?</label><input id="directTitle" class="sd-input" placeholder="Посылка, документы, покупки…"></div>
      <div class="sd-grid2"><div class="sd-field"><label class="sd-label">Вес, кг</label><input id="directWeight" class="sd-input" type="number" min="0" max="8" step=".1" value="0"></div><div class="sd-field"><label class="sd-label">Цена доставки, AMD</label><input id="directPrice" class="sd-input" type="number" min="0" step="100" value="1500" oninput="updateDirectTotal()"></div></div>
-     <div class="sd-field"><label class="sd-label">Промокод</label><div class="sd-promo"><input id="directPromo" class="sd-input" placeholder="SERTAL10"><button class="sd-btn gold" onclick="checkDirectPromo()">Применить</button></div><div id="directPromoInfo" class="sd-info hidden"></div></div>
+     <div id="directPromoInfo" class="sd-info hidden"></div></div>
      <div class="sd-field"><label class="sd-label">Комментарий курьеру</label><textarea id="directNote" class="sd-textarea" placeholder="Подъезд, этаж, ориентир…"></textarea></div>
      <div class="sd-total"><span>Итого к оплате</span><b id="directTotal">1500 AMD</b></div><button class="sd-btn gold full" onclick="submitDirectDelivery()">Оформить доставку →</button>
     </div>
@@ -73,11 +73,9 @@
 
    <div id="customerScreenDiscover" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/back.png" alt="" aria-hidden="true"></button><div><div class="sd-ey">SMART SEARCH</div><h2 class="sd-h2">Интернет + ИИ</h2></div></div><div class="sd-card"><div class="sd-promo"><input id="buyerDiscoverSearch" class="sd-input" placeholder="Что найти в интернете?"><button class="sd-btn gold" onclick="searchGoogle(document.getElementById('buyerDiscoverSearch').value)"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/search.png" alt="" aria-hidden="true"></button></div><p class="sd-sub">Gemini может найти актуальную информацию и показать источники.</p><div id="buyerDiscoverResults"></div></div></div>
 
-   <div id="customerScreenPromos" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/back.png" alt="" aria-hidden="true"></button><div><div class="sd-ey">SERTAL REWARDS</div><h2 class="sd-h2">Промокоды</h2></div></div><div class="sd-card"><label class="sd-label">Проверить код</label><div class="sd-promo"><input id="standalonePromo" class="sd-input" placeholder="Введите промокод"><button class="sd-btn gold" onclick="previewStandalonePromo()">Проверить</button></div><div id="standalonePromoInfo" class="sd-info hidden"></div></div><div class="sd-section"><h2>Предложения</h2></div><div class="sd-promo-card"><div class="pct"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/discount.png" alt="" aria-hidden="true"></div><div class="sd-code">SERTAL10</div><p>Скидка на заказ при выполнении условий промокода.</p><button class="sd-btn small" onclick="document.getElementById('directPromo').value='SERTAL10';showCustomerScreen('create')">Использовать</button></div><div class="sd-promo-card"><div class="pct"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/discount.png" alt="" aria-hidden="true"></div><div class="sd-code">SERTAL20</div><p>Специальное предложение для клиентов SERTAL. Условия проверяются сервером.</p><button class="sd-btn small" onclick="document.getElementById('directPromo').value='SERTAL20';showCustomerScreen('create')">Использовать</button></div></div>
+   <div id="customerScreenProfile" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/back.png" alt="" aria-hidden="true"></button><div><div class="sd-ey">ACCOUNT</div><h2 class="sd-h2">Профиль</h2></div></div><div class="sd-card"><div class="sd-profile"><div id="sdProfileAvatar" class="sd-avatar">S</div><div><div class="sd-ey">SERTAL MEMBER</div><h2 id="sdProfileName" class="sd-h2">Профиль</h2><div id="sdProfilePhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Личные данные</h2></div><div class="sd-card"><div class="sd-grid2"><div><label class="sd-label">Имя</label><div id="sdDataName" class="sd-sub">—</div></div><div><label class="sd-label">Телефон</label><div id="sdDataPhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Мои адреса</h2></div><div class="sd-card"><input id="profileAddress" class="sd-input" placeholder="Адрес по умолчанию"><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('profileAddress')">Сохранить</button><button class="sd-btn full u-mt-7" onclick="useCurrentLocation('profileAddress')">Определить по GPS</button></div><div class="sd-menu"><button onclick="contactAdmin()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/online-support.png" alt="" aria-hidden="true"><b>Поддержка</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button><button onclick="showCustomerScreen('orders')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/order-delivered.png" alt="" aria-hidden="true"><b>Мои заказы</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button><button onclick="logout()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/logout-rounded.png" alt="" aria-hidden="true"><b>Выйти</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button></div></div>
 
-   <div id="customerScreenProfile" class="sd-screen"><div class="sd-head"><button class="sd-back" onclick="showCustomerScreen('home')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/back.png" alt="" aria-hidden="true"></button><div><div class="sd-ey">ACCOUNT</div><h2 class="sd-h2">Профиль</h2></div></div><div class="sd-card"><div class="sd-profile"><div id="sdProfileAvatar" class="sd-avatar">S</div><div><div class="sd-ey">SERTAL MEMBER</div><h2 id="sdProfileName" class="sd-h2">Профиль</h2><div id="sdProfilePhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Личные данные</h2></div><div class="sd-card"><div class="sd-grid2"><div><label class="sd-label">Имя</label><div id="sdDataName" class="sd-sub">—</div></div><div><label class="sd-label">Телефон</label><div id="sdDataPhone" class="sd-sub">—</div></div></div></div><div class="sd-section"><h2>Мои адреса</h2></div><div class="sd-card"><input id="profileAddress" class="sd-input" placeholder="Адрес по умолчанию"><button class="sd-btn gold full u-mt-8" onclick="saveDefaultAddress('profileAddress')">Сохранить</button><button class="sd-btn full u-mt-7" onclick="useCurrentLocation('profileAddress')">Определить по GPS</button></div><div class="sd-menu"><button onclick="contactAdmin()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/online-support.png" alt="" aria-hidden="true"><b>Поддержка</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button><button onclick="showCustomerScreen('promos')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/discount.png" alt="" aria-hidden="true"><b>Промокоды</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button><button onclick="showCustomerScreen('orders')"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/order-delivered.png" alt="" aria-hidden="true"><b>Мои заказы</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button><button onclick="logout()"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/logout-rounded.png" alt="" aria-hidden="true"><b>Выйти</b><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/forward.png" alt="" aria-hidden="true"></button></div></div>
-
-   <div id="buyerHomePanel" class="hidden"></div><div id="buyerDiscoverPanel" class="hidden"></div><div id="buyerProfilePanel" class="hidden"></div><div id="buyerPromoPanel" class="hidden"></div><div id="restaurantShopArea" class="hidden"></div><div id="customerSupportArea" class="hidden"></div>
+   <div id="buyerHomePanel" class="hidden"></div><div id="buyerDiscoverPanel" class="hidden"></div><div id="buyerProfilePanel" class="hidden"></div><div id="restaurantShopArea" class="hidden"></div><div id="customerSupportArea" class="hidden"></div>
    <nav id="buyerBottomNav" class="sd-bottom"><button class="active" onclick="showCustomerScreen('home');sdBottom(this)"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/home.png" alt="" aria-hidden="true"><small>Главная</small></button><button onclick="showCustomerScreen('orders');sdBottom(this)"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/order-delivered.png" alt="" aria-hidden="true"><small>Заказы</small></button><button onclick="showCustomerScreen('create');sdBottom(this)"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/plus.png" alt="" aria-hidden="true"><small>Создать</small></button><button onclick="showCustomerScreen('promos');sdBottom(this)"><span>%</span><small>Промо</small></button><button onclick="showCustomerScreen('profile');sdBottom(this)"><img class="remote-ui-icon" src="https://img.icons8.com/fluency/48/user.png" alt="" aria-hidden="true"><small>Профиль</small></button></nav>
   </section>
 
@@ -1284,7 +1282,7 @@ async function toggleRestaurant(id){try{await api(`/api/admin/restaurants/${id}/
 let cart={restaurantId:null,restaurantName:"",items:new Map()};
 
 async function openRestaurantShop(){
- const area=document.getElementById("restaurantShopArea"); if(!area)return; area.classList.remove("hidden"); area.innerHTML=`<div class="marketHero"><div class="marketHeroText"><h1>▦ Доставка</h1><p class="itemSub">Выберите ресторан и товары. Отметьте позиции галочками и добавьте их в корзину.</p></div><button class="secondary" onclick="loadCustomerRestaurants()">↻ Обновить</button></div><div id="customerRestaurantsList" class="u-mt-14">Загрузка...</div>`; area.scrollIntoView({behavior:"smooth",block:"start"}); await loadCustomerRestaurants();
+ const area=document.getElementById("restaurantShopArea"); if(!area)return; area.classList.remove("hidden"); area.innerHTML=`<div class="marketHero"><div class="marketHeroText"><h1>▦ Доставка</h1><p class="itemSub">Выберите ресторан и товары. Отметьте позиции галочками и добавьте их в корзину.</p></div><button class="secondary" onclick="loadCustomerRestaurants()">Обновить</button></div><div id="customerRestaurantsList" class="u-mt-14">Загрузка...</div>`; area.scrollIntoView({behavior:"smooth",block:"start"}); await loadCustomerRestaurants();
 }
 
 async function loadCustomerRestaurants(){
@@ -1331,7 +1329,26 @@ async function submitCartOrder(){
 async function saveDefaultAddressValue(address,lat=null,lon=null){ try{await api("/api/customer/address",{method:"POST",body:JSON.stringify({address:String(address||""),lat,lon})}); localStorage.setItem("sertal_default_address",String(address||""));}catch(e){console.log("address save",e)} }
 async function saveDefaultAddress(inputId="buyerAddress"){ const input=document.getElementById(inputId); const address=input?.value.trim()||""; if(!address){toast("Введите адрес");return} await saveDefaultAddressValue(address); toast("Адрес сохранён"); }
 async function loadDefaultAddress(inputId="buyerAddress"){ try{const r=await api("/api/customer/address"); const address=r.address||localStorage.getItem("sertal_default_address")||""; const el=document.getElementById(inputId); if(el && !el.value)el.value=address;}catch(e){const el=document.getElementById(inputId);if(el&&!el.value)el.value=localStorage.getItem("sertal_default_address")||""} }
-function useCurrentLocation(inputId="buyerAddress"){ if(!navigator.geolocation){toast("Геолокация недоступна");return} toast("Определяю местоположение…"); navigator.geolocation.getCurrentPosition(async pos=>{ const lat=pos.coords.latitude,lon=pos.coords.longitude; const el=document.getElementById(inputId); let address=el?.value?.trim()||""; try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,{headers:{"Accept":"application/json"}}); const j=await r.json(); address=j.display_name||address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;}catch(e){address=address||`GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;} if(el)el.value=address; await saveDefaultAddressValue(address,lat,lon); toast("Адрес определён и сохранён");},()=>toast("Не удалось получить геолокацию. Разрешите доступ к GPS."),{enableHighAccuracy:true,timeout:10000,maximumAge:60000}); }
+function useCurrentLocation(inputId="buyerAddress"){
+    if(!navigator.geolocation){toast("Браузер не поддерживает GPS");return}
+    if(location.protocol!=="https:" && location.hostname!=="localhost"){toast("GPS работает только через HTTPS");return}
+    toast("Получаю координаты...");
+    navigator.geolocation.getCurrentPosition(async pos=>{
+        const lat=pos.coords.latitude, lon=pos.coords.longitude;
+        const el=document.getElementById(inputId);
+        let address=el?.value?.trim()||"";
+        try{
+            const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=18&addressdetails=1`,{headers:{"Accept":"application/json","Accept-Language":"ru"}});
+            const j=await r.json();
+            address=j.display_name||address||`GPS: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        }catch(e){address=address||`GPS: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;}
+        if(el)el.value=address;
+        await saveDefaultAddressValue(address,lat,lon);
+        toast("Местоположение определено");
+    },err=>{
+        toast(({1:"Разрешите доступ к геолокации.",2:"GPS сейчас недоступен.",3:"GPS не ответил вовремя."}[err.code]||"Ошибка GPS"));
+    },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+}
 
 /* =========================================================
    COURIERS
@@ -1746,8 +1763,8 @@ function initAdminMap(){
     const el=document.getElementById("adminCityMap");
     if(!el||adminMap)return;
     adminMap=L.map(el,{zoomControl:true,attributionControl:true,preferCanvas:true,dragging:true,tap:true,touchZoom:true,scrollWheelZoom:true,doubleClickZoom:true}).setView([40.1872,44.5152],12);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-        maxZoom:19,subdomains:["a","b","c"],attribution:"&copy; OpenStreetMap contributors"
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+        maxZoom:20,subdomains:["a","b","c"],attribution:"&copy; OpenStreetMap &copy; CARTO"
     }).addTo(adminMap);
     setTimeout(()=>adminMap.invalidateSize(true),100);
 }
@@ -1763,7 +1780,7 @@ async function loadAdminMap(){
             </aside>
             <main class="mapCanvas">
                 <div class="mapOverlay"><div class="mapChip"><b id="mapOrdersCount">0</b> заказов</div><div class="mapChip"><b id="mapCourierCount">0</b> курьеров</div><div class="mapChip"><b>Ереван</b></div></div>
-                <div class="mapToolbar"><button class="mapTool" type="button" onclick="centerYerevan()">Ереван</button><button class="mapTool" type="button" onclick="refreshLiveMap()">↻ Обновить</button><button class="mapTool" type="button" onclick="toggleMapFullscreen()">⛶ На весь экран</button></div>
+                <div class="mapToolbar"><button class="mapTool" type="button" onclick="centerYerevan()">Ереван</button><button class="mapTool" type="button" onclick="refreshLiveMap()">Обновить</button><button class="mapTool" type="button" onclick="toggleMapFullscreen()">На весь экран</button></div>
                 <div id="adminCityMap"></div>
             </main></div>`;
         initAdminMap();area.dataset.ready="1";setTimeout(()=>adminMap?.invalidateSize(),80);
@@ -1792,7 +1809,7 @@ async function refreshLiveMap(){
             const lat=Number(o.lat), lon=Number(o.lon);
             if(!Number.isFinite(lat)||!Number.isFinite(lon)) return;
             const st=statusInfo(o.status);
-            const marker=L.circleMarker([lat,lon],{radius:9,weight:3,fillOpacity:.9,color:"#d4af37",fillColor:"#d4af37"}).addTo(adminMap);
+            const marker=L.marker([lat,lon],{icon:L.divIcon({className:"sertal-map-pin",html:"<span></span>",iconSize:[24,24],iconAnchor:[12,12]})}).addTo(adminMap);
             marker.__orderId=Number(o.id);
             marker.bindPopup(`<b>Заказ #${Number(o.id)}</b><br>${escapeHtml(o.title||"Заказ")}<br>${escapeHtml(o.address||"Адрес не указан")}<br>${st.icon} ${st.text}`);
             adminMapMarkers.push(marker);
@@ -1800,7 +1817,7 @@ async function refreshLiveMap(){
         couriers.forEach(c=>{
             const lat=Number(c.lat), lon=Number(c.lon);
             if(!Number.isFinite(lat)||!Number.isFinite(lon)) return;
-            const marker=L.circleMarker([lat,lon],{radius:8,weight:3,fillOpacity:.95,color:"#f0cf63",fillColor:"#11100d"}).addTo(adminMap);
+            const marker=L.marker([lat,lon],{icon:L.divIcon({className:"sertal-courier-pin",html:"<img src=\"https://img.icons8.com/fluency/48/delivery-truck.png\" alt=\"\">",iconSize:[32,32],iconAnchor:[16,16]})}).addTo(adminMap);
             marker.bindPopup(`<b>${escapeHtml(c.name||"Курьер")}</b><br>${c.online?"Онлайн":"Офлайн"}`);
             courierMapMarkers.set(c.id,marker);
         });
@@ -1901,7 +1918,7 @@ async function refreshSupportChat(){
         if(nearBottom)box.scrollTop=box.scrollHeight;
     }catch(e){console.log("Support chat",e)}
 }
-async function sendSupportMessage(){
+async async function sendSupportMessage(){
     const input=document.getElementById("supportInput");
     const text=input?.value.trim(); if(!text)return;
     try{await api("/api/chat/send",{method:"POST",body:JSON.stringify({text})});input.value="";await refreshSupportChat();toast("Сообщение отправлено в поддержку");}
@@ -2012,7 +2029,7 @@ async function checkDirectPromo(){
 async function submitDirectDelivery(){
  const from=document.getElementById('directFrom')?.value.trim(), address=document.getElementById('directAddress')?.value.trim(), title=document.getElementById('directTitle')?.value.trim();
  if(!from||!address||!title){toast('Заполните адрес отправления, адрес получателя и описание');return;}
- try{const r=await api('/api/customer/orders/direct',{method:'POST',body:JSON.stringify({from_address:from,address,recipient_name:document.getElementById('directRecipient')?.value.trim()||'',recipient_phone:document.getElementById('directRecipientPhone')?.value.trim()||'',title,weight_kg:Number(document.getElementById('directWeight')?.value||0),price:Number(document.getElementById('directPrice')?.value||0),promo_code:window.directPromoCode||'',delivery_note:document.getElementById('directNote')?.value.trim()||''})}); closeDirectDelivery(); toast(`✓ Заказ #${r.order_id} создан · ${Number(r.total||0).toFixed(0)} AMD`); window.directPromoCode='';window.directPromoDiscount=0; await loadCustomer(); }catch(e){toast(formatError(e.message));}
+ try{const r=await api('/api/customer/orders/direct',{method:'POST',body:JSON.stringify({from_address:from,address,recipient_name:document.getElementById('directRecipient')?.value.trim()||'',recipient_phone:document.getElementById('directRecipientPhone')?.value.trim()||'',title,weight_kg:Number(document.getElementById('directWeight')?.value||0),price:Number(document.getElementById('directPrice')?.value||0),delivery_note:document.getElementById('directNote')?.value.trim()||''})}); closeDirectDelivery(); toast(`✓ Заказ #${r.order_id} создан · ${Number(r.total||0).toFixed(0)} AMD`); window.directPromoCode='';window.directPromoDiscount=0; await loadCustomer(); }catch(e){toast(formatError(e.message));}
 }
 async function previewStandalonePromo(){
  const code=document.getElementById('standalonePromo')?.value.trim(); if(!code){toast('Введите промокод');return;} const info=document.getElementById('standalonePromoInfo');
@@ -2575,65 +2592,16 @@ async function courierComplete(id){
    GEOLOCATION
 ========================================================= */
 
+let courierWatchId=null;
 function startLocationUpdates(){
-
-    if(!navigator.geolocation)
-        return;
-
-    if(geoTimer)
-        clearInterval(geoTimer);
-
-
-    const sendLocation = () => {
-
-        navigator.geolocation.getCurrentPosition(
-
-            async position => {
-
-                try{
-
-                    await api(
-                        "/api/courier/location",
-                        {
-                            method:"POST",
-                            body:JSON.stringify({
-                                lat:
-                                    position.coords.latitude,
-                                lon:
-                                    position.coords.longitude
-                            })
-                        }
-                    );
-
-                }catch(error){
-
-                    console.log(
-                        "Location:",
-                        error.message
-                    );
-                }
-            },
-
-            () => {},
-
-            {
-                enableHighAccuracy:true,
-                timeout:10000,
-                maximumAge:5000
-            }
-        );
-    };
-
-
-    sendLocation();
-
-    geoTimer =
-        setInterval(
-            sendLocation,
-            15000
-        );
+    if(!navigator.geolocation)return;
+    if(courierWatchId!==null)navigator.geolocation.clearWatch(courierWatchId);
+    courierWatchId=navigator.geolocation.watchPosition(async position=>{
+        try{await api("/api/courier/location",{method:"POST",body:JSON.stringify({lat:Number(position.coords.latitude),lon:Number(position.coords.longitude)})});}
+        catch(error){console.log("Location:",error.message);}
+    },err=>toast(({1:"Разрешите GPS для курьера.",2:"GPS недоступен.",3:"GPS отвечает слишком долго."}[err.code]||"Ошибка GPS")),{enableHighAccuracy:true,timeout:15000,maximumAge:3000});
 }
-
+function stopLocationUpdates(){if(courierWatchId!==null){navigator.geolocation.clearWatch(courierWatchId);courierWatchId=null;}}
 
 /* =========================================================
    STATUS
@@ -2762,7 +2730,7 @@ window.searchInternet=searchGoogle;
 
 <script>
 function sdAuthTab(mode){['login','register','admin'].forEach(x=>document.getElementById('authTab'+x[0].toUpperCase()+x.slice(1))?.classList.toggle('active',x===mode))}
-function showCustomerScreen(name){const ids=['home','create','orders','discover','promos','profile'];ids.forEach(x=>document.getElementById('customerScreen'+x[0].toUpperCase()+x.slice(1))?.classList.remove('active'));document.getElementById('customerScreen'+({home:'Home',create:'Create',orders:'Orders',discover:'Discover',promos:'Promos',profile:'Profile'}[name]||'Home'))?.classList.add('active');document.querySelectorAll('#buyerBottomNav button').forEach((b,i)=>b.classList.toggle('active',['home','orders','create','promos','profile'][i]===name));if(name==='orders')loadCustomer();if(name==='profile'){const u=currentUser||{};['sdProfileName','sdDataName'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=u.name||'Профиль'});['sdProfilePhone','sdDataPhone'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=u.phone||'—'});const a=document.getElementById('sdProfileAvatar');if(a)a.textContent=(u.name||'S').slice(0,1).toUpperCase();loadDefaultAddress('profileAddress')}}
+function showCustomerScreen(name){const ids=['home','create','orders','discover','profile'];ids.forEach(x=>document.getElementById('customerScreen'+x[0].toUpperCase()+x.slice(1))?.classList.remove('active'));document.getElementById('customerScreen'+({home:'Home',create:'Create',orders:'Orders',discover:'Discover',profile:'Profile'}[name]||'Home'))?.classList.add('active');document.querySelectorAll('#buyerBottomNav button').forEach((b,i)=>b.classList.toggle('active',['home','orders','create','profile'][i]===name));if(name==='orders')loadCustomer();if(name==='profile'){const u=currentUser||{};['sdProfileName','sdDataName'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=u.name||'Профиль'});['sdProfilePhone','sdDataPhone'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=u.phone||'—'});const a=document.getElementById('sdProfileAvatar');if(a)a.textContent=(u.name||'S').slice(0,1).toUpperCase();loadDefaultAddress('profileAddress')}}
 function sdBottom(b){document.querySelectorAll('#buyerBottomNav button').forEach(x=>x.classList.remove('active'));b?.classList.add('active')}
 function openDirectDelivery(){showCustomerScreen('create');loadDefaultAddress('directAddress');const p=document.getElementById('directPrice');if(p&&!p.value)p.value='1500';updateDirectTotal()}
 function closeDirectDelivery(){showCustomerScreen('home')}
