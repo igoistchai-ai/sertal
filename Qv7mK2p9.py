@@ -801,6 +801,10 @@ async def index():
 async def head_index():
     return {}
 
+@app.get("/style.css")
+async def style_css():
+    return FileResponse(Path(__file__).resolve().with_name("style.css"), media_type="text/css")
+
 
 # =========================================================
 # LOGIN
@@ -2873,8 +2877,8 @@ async def upload_chat_file(file: UploadFile = File(...), authorization: str = He
                 break
             out.write(chunk)
 
-    msg_id = add_chat_message(user["user_id"], user["role"], "📎 Файл", original_name)
-    await notify_admins_about_user_message(user, "📎 Файл из веб-чата", str(path), original_name)
+    msg_id = add_chat_message(user["user_id"], user["role"], "Файл", original_name)
+    await notify_admins_about_user_message(user, "Файл из веб-чата", str(path), original_name)
     return {"ok": True, "id": msg_id, "file_name": original_name}
 
 
@@ -3164,7 +3168,7 @@ async def start_command(
 
 async def random_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📱 Вход в SERTAL DELIVERY выполняется по номеру телефона, который добавил администратор."
+        "Телефон: Вход в SERTAL DELIVERY выполняется по номеру телефона, который добавил администратор."
     )
 
 
