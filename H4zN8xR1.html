@@ -18,11 +18,6 @@
 
 
 
-\n</head>
-
-
-
-
 </head><body>
 
 <div id="toast" class="toast"></div>
@@ -2824,6 +2819,113 @@ const _v2Update=typeof updateCourierOnlineUI==='function'?updateCourierOnlineUI:
 function updateCourierOnlineUI(){try{_v2Update&&_v2Update()}catch(e){}const on=!!courierOnline,s=document.getElementById('courierOnlineStatus');if(s){s.classList.toggle('off',!on);s.innerHTML='<i></i><span>'+ (on?'ОНЛАЙН':'ОФЛАЙН')+'</span>'}const b=document.getElementById('courierOnlineBtn');if(b){b.textContent=on?'Онлайн':'Офлайн';b.classList.toggle('gold',on)}}
 function buyerPage(page){showCustomerScreen({home:'home',orders:'orders',promos:'promos',profile:'profile',discover:'discover'}[page]||'home')}
 document.addEventListener('DOMContentLoaded',()=>{sdAuthTab('login');document.getElementById('loginPhone')?.addEventListener('keydown',e=>{if(e.key==='Enter')login()})});
+
+/* =========================================================
+   REMOTE UI ICONS — NO EMOJI / NO TEXT PICTOGRAMS
+   Uses real image assets loaded from the web.
+========================================================= */
+const REMOTE_UI_ICON_BASE = "https://img.icons8.com/ios-filled/48/FFFFFF/";
+const REMOTE_UI_ICONS = {
+  "⌖":"map-marker.png",
+  "＋":"plus-math.png",
+  "◌":"chat.png",
+  "↪":"logout-rounded.png",
+  "⌂":"home.png",
+  "▣":"purchase-order.png",
+  "♙":"user.png",
+  "♧":"delivery.png",
+  "✦":"sparkling.png",
+  "⌕":"search.png",
+  "‹":"chevron-left.png",
+  "×":"close.png",
+  "◷":"clock.png",
+  "↻":"refresh.png",
+  "⛶":"fullscreen.png",
+  "📍":"map-marker.png",
+  "📱":"phone.png",
+  "🛵":"scooter.png",
+  "🚚":"truck.png",
+  "💰":"money-bag.png",
+  "🤖":"bot.png",
+  "💬":"chat.png",
+  "📦":"package.png",
+  "📎":"attach.png",
+  "📊":"statistics.png",
+  "✅":"checkmark.png",
+  "❌":"cancel.png",
+  "🔎":"search.png",
+  "🍽":"restaurant.png"
+};
+
+function remoteUiIcon(symbol, alt=""){
+  const file = REMOTE_UI_ICONS[symbol];
+  if(!file) return null;
+  const img=document.createElement("img");
+  img.className="remote-ui-icon";
+  img.src=REMOTE_UI_ICON_BASE + file;
+  img.alt=alt || "";
+  img.setAttribute("aria-hidden", alt ? "false" : "true");
+  img.loading="lazy";
+  return img;
+}
+
+function replaceRemoteUiIcons(root=document.body){
+  if(!root) return;
+  const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes=[];
+  let n;
+  while((n=walker.nextNode())){
+    const p=n.parentElement;
+    if(!p || p.closest("script,style,template,textarea")) continue;
+    if(!/[⌖＋◌↪⌂▣♙♧✦⌕‹×◷↻⛶📍📱🛵🚚💰🤖💬📦📎📊✅❌🔎🍽]/u.test(n.nodeValue)) continue;
+    nodes.push(n);
+  }
+  for(const node of nodes){
+    let text=node.nodeValue || "";
+    const frag=document.createDocumentFragment();
+    while(text){
+      let bestIndex=text.length, bestSymbol=null;
+      for(const symbol of Object.keys(REMOTE_UI_ICONS)){
+        const i=text.indexOf(symbol);
+        if(i!==-1 && i<bestIndex){ bestIndex=i; bestSymbol=symbol; }
+      }
+      if(!bestSymbol){ frag.appendChild(document.createTextNode(text)); break; }
+      if(bestIndex>0) frag.appendChild(document.createTextNode(text.slice(0,bestIndex)));
+      const img=remoteUiIcon(bestSymbol, bestSymbol);
+      if(img) frag.appendChild(img); else frag.appendChild(document.createTextNode(bestSymbol));
+      text=text.slice(bestIndex+bestSymbol.length);
+    }
+    node.parentNode?.replaceChild(frag,node);
+  }
+
+  // Percentage symbols are icons only when used as dedicated UI badges.
+  root.querySelectorAll?.(".pct, .promoOrb").forEach(el=>{
+    if(el.dataset.remoteIconDone) return;
+    const text=(el.textContent||"").trim();
+    if(text==="%"){
+      const img=remoteUiIcon("✦","Promo");
+      if(img){ img.src=REMOTE_UI_ICON_BASE+"discount.png"; img.alt="Промо"; el.replaceChildren(img); }
+    }
+    el.dataset.remoteIconDone="1";
+  });
+}
+
+const remoteUiObserver = new MutationObserver((mutations)=>{
+  for(const m of mutations){
+    for(const node of m.addedNodes){
+      if(node.nodeType===Node.TEXT_NODE){
+        const parent=node.parentElement;
+        if(parent) replaceRemoteUiIcons(parent);
+      }else if(node.nodeType===Node.ELEMENT_NODE){
+        replaceRemoteUiIcons(node);
+      }
+    }
+    if(m.type==="characterData" && m.target?.parentElement) replaceRemoteUiIcons(m.target.parentElement);
+  }
+});
+remoteUiObserver.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
+window.addEventListener("DOMContentLoaded",()=>replaceRemoteUiIcons(document.body));
+
 </script>
 
 <script>boot();</script>
