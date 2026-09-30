@@ -782,6 +782,17 @@ class CartOrderData(BaseModel):
     delivery_note: str = ""
     promo_code: str = ""
 
+class DirectOrderData(BaseModel):
+    from_address: str
+    address: str
+    recipient_name: str = ""
+    recipient_phone: str = ""
+    title: str
+    weight_kg: float = 0
+    price: float = 0
+    delivery_note: str = ""
+
+
 class CustomerAddressData(BaseModel):
     address: str = ""
     lat: float | None = None
@@ -1585,6 +1596,44 @@ async def admin_login(data: AdminLoginData):
     finally:
         conn.close()
 
+
+
+
+@app.post("/api/customer/orders/direct")
+async def customer_create_direct_order(data: DirectOrderData, authorization: str = Header(default="")):
+    user = require_user(authorization)
+    if user["role"] != "customer":
+        raise HTTPException(status_code=403, detail="Нет доступа")
+    from_address, address, title = data.from_address.strip(), data.address.strip(), data.title.strip()
+    if not from_address or not address or not title:
+        raise HTTPException(status_code=400, detail="Заполните адреса и описание заказа")
+    weight = float(data.weight_kg or 0)
+    if weight < 0 or weight > MAX_ORDER_WEIGHT_KG:
+        raise HTTPException(status_code=400, detail=f"Вес должен быть от 0 до {MAX_ORDER_WEIGHT_KG:g} кг")
+    price = max(0.0, float(data.price or 0))
+    lat, lon = geocode_yerevan(address)
+    from_lat, from_lon = geocode_yerevan(from_address)
+    bonus = calculate_courier_bonus(weight)
+    conn = db()
+    try:
+        cur = conn.execute("""
+            INSERT INTO orders(
+                customer_id,title,address,price,status,created_at,weight_kg,courier_bonus_amd,
+                lat,lon,restaurant_address,restaurant_lat,restaurant_lon,restaurant_name,
+                recipient_name,delivery_note,items_text,route_no
+            ) VALUES(?,?,?,?,'new',?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (
+            user["user_id"], title, address, price, int(time.time()), weight, bonus,
+            lat, lon, from_address, from_lat, from_lon, "SERTAL DELIVERY",
+            data.recipient_name.strip(), data.delivery_note.strip(),
+            f"Откуда: {from_address}" + (f"\nТелефон получателя: {data.recipient_phone.strip()}" if data.recipient_phone.strip() else ""),
+            None
+        ))
+        conn.commit()
+        order_id = cur.lastrowid
+    finally:
+        conn.close()
+    return {"ok": True, "order_id": order_id, "total": price}
 
 @app.get("/api/customer/history")
 async def customer_history(authorization: str = Header(default="")):
