@@ -25,7 +25,7 @@
   </section>
   <section class="sd-login">
    <div class="sd-login-head"><div class="sd-ey">SERTAL PRIVATE APP</div><h2 id="authTitle">Войти</h2><p id="authText">Введите номер телефона, чтобы открыть личный кабинет.</p></div>
-   <div class="sd-auth-tabs"><button id="authTabLogin" class="active" onclick="openAuth('login');sdAuthTab('login')">Вход</button><button id="authTabRegister" onclick="openAuth('register');sdAuthTab('register')">Регистрация</button><button id="authTabAdmin" onclick="openAuth('admin');sdAuthTab('admin')">Админ</button></div>
+   <div class="sd-auth-tabs"><button type="button" id="authTabLogin" class="active" onclick="openAuth('login');sdAuthTab('login')">Вход</button><button type="button" id="authTabRegister" onclick="openAuth('register');sdAuthTab('register')">Регистрация</button><button type="button" id="authTabAdmin" onclick="openAuth('admin');sdAuthTab('admin')">Админ</button></div>
    <div id="loginFormBox" class="sd-stack"><input id="loginPhone" class="sd-input" type="tel" placeholder="+374 00 000 000" autocomplete="tel"><button class="sd-btn gold full" onclick="login()">Войти в SERTAL →</button><div class="sd-note">Вход сохраняется в браузере и связан с серверной сессией SERTAL DELIVERY.</div></div>
    <div id="registerFormBox" class="sd-stack hidden"><input id="regName" class="sd-input" placeholder="Ваше имя"><input id="regPhone" class="sd-input" type="tel" placeholder="+374 00 000 000"><button class="sd-btn gold full" onclick="registerCustomer()">Создать аккаунт →</button><div class="sd-note">После регистрации вы сразу попадёте в клиентское приложение.</div></div>
    <div id="adminFormBox" class="sd-stack hidden"><input id="adminAccessCode" class="sd-input" type="password" placeholder="Секретный код доступа" autocomplete="off"><button class="sd-btn gold full" onclick="adminLogin()">Открыть админ-панель</button><div class="sd-note">Закрытый доступ. Код проверяется только на сервере.</div></div></div>
@@ -319,20 +319,29 @@ function showPublicHome(){
   document.getElementById("app")?.classList.add("hidden");
 }
 function openAuth(mode="login"){
-  document.getElementById("authModal")?.classList.remove("hidden");
-  document.getElementById("loginFormBox")?.classList.toggle("hidden", mode!=="login");
-  document.getElementById("registerFormBox")?.classList.toggle("hidden", mode!=="register");
-  document.getElementById("adminFormBox")?.classList.toggle("hidden", mode!=="admin");
-  const titles={login:["ЛИЧНЫЙ КАБИНЕТ","Войти","Введите номер телефона, добавленный в SERTAL DELIVERY."],register:["НОВЫЙ ПОКУПАТЕЛЬ","Регистрация","Создайте аккаунт бесплатно — подтверждение администратора не требуется. Вход дальше будет только по номеру телефона."],admin:["PRIVATE ADMIN","Вход администратора","Введите секретный код доступа."]};
+  const loginBox=document.getElementById("loginFormBox");
+  const registerBox=document.getElementById("registerFormBox");
+  const adminBox=document.getElementById("adminFormBox");
+  if(!loginBox || !registerBox || !adminBox) return;
+  loginBox.classList.toggle("hidden", mode!=="login");
+  registerBox.classList.toggle("hidden", mode!=="register");
+  adminBox.classList.toggle("hidden", mode!=="admin");
+  const titles={
+    login:["Войти","Введите номер телефона, чтобы открыть личный кабинет."],
+    register:["Регистрация","Создайте аккаунт и привяжите его к номеру телефона."],
+    admin:["Вход администратора","Введите секретный код доступа."]
+  };
   const t=titles[mode]||titles.login;
-  document.getElementById("authEyebrow").textContent=t[0];
-  document.getElementById("authTitle").textContent=t[1];
-  document.getElementById("authText").textContent=t[2];
+  const title=document.getElementById("authTitle");
+  const text=document.getElementById("authText");
+  if(title) title.textContent=t[0];
+  if(text) text.textContent=t[1];
+  if(typeof sdAuthTab === "function") sdAuthTab(mode);
 }
 function openLogin(){openAuth("login")}
 function openRegister(){openAuth("register")}
 function openAdminLogin(){openAuth("admin")}
-function closeAuth(){document.getElementById("authModal")?.classList.add("hidden")}
+function closeAuth(){return;}
 function hideRegister(){closeAuth()}
 
 async function registerCustomer(){
