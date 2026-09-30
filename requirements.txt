@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pydantic
+openpyxl
+reportlab
+Pillow
+python-telegram-bot
