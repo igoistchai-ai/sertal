@@ -50,13 +50,11 @@ ADMIN_IDS = {
     7003441441,
 }
 
-# Separate personal Web App logins for administrators.
-# Keep these credentials on the server; they are not exposed to the public UI.
-ADMIN_ACCOUNTS = {
-    "7776254829": "администратор",
-    "7782284728": "администратор2",
-    "779625382": "администратор3",
-}
+# Single private administrator access code. Keep it ONLY in Render Environment Variables.
+# No admin phone numbers or nicknames are used for Web App login.
+ADMIN_ACCESS_CODE = os.getenv("ADMIN_ACCESS_CODE", "").strip()
+ADMIN_ACCOUNT_PHONE = "__sertal_admin__"
+ADMIN_ACCOUNT_NAME = "SERTAL Administrator"
 
 # Persistent database location. On Render, mount a Persistent Disk at /var/data.
 # The env var allows the same code to run locally without changing the database.
@@ -804,30 +802,17 @@ async def head_index():
     return {}
 
 
-@app.get("/style.css")
-async def style_css():
-    return FileResponse(Path(__file__).resolve().with_name("style.css"), media_type="text/css")
-
-
 # =========================================================
 # LOGIN
 # =========================================================
 
 @app.post("/api/login")
 async def login(data: LoginData):
-    # Обычный вход покупателя/курьера.
-    # Специальные номера администраторов (+777/+778/+779)
-    # разрешены отдельным персональным входом, но не считаются
-    # обычными телефонными номерами.
+    # Обычный вход покупателя/курьера. Администратор входит
+    # отдельной формой по секретному серверному коду.
     phone = normalize_phone(data.phone)
-    if phone in ADMIN_ACCOUNTS:
-        raise HTTPException(
-            status_code=403,
-            detail="Это номер администратора. Нажмите «Админ» и введите персональный никнейм."
-        )
     # Публичная регистрация включена. Для реальных номеров разрешаем
     # международный формат после очистки от пробелов, скобок и дефисов.
-    # Минимум 3 цифры оставляем только для тестовых номеров администраторов.
     if len(phone) < 3:
         raise HTTPException(status_code=400, detail="Введите корректный номер телефона")
 
@@ -1523,9 +1508,8 @@ class RegisterData(BaseModel):
     phone: str
     telegram_id: int | None = None
 
-class AdminPersonalLogin(BaseModel):
-    phone: str
-    nickname: str
+class AdminLoginData(BaseModel):
+    access_code: str
 
 @app.post("/api/register")
 async def register_customer(data: RegisterData):
@@ -1565,31 +1549,35 @@ async def register_customer(data: RegisterData):
     finally:
         conn.close()
 
-@app.post("/api/admin/personal-login")
-async def admin_personal_login(data: AdminPersonalLogin):
-    phone = normalize_phone(data.phone)
-    nickname = re.sub(r"\s+", " ", str(data.nickname or "").strip())
-    expected = ADMIN_ACCOUNTS.get(phone)
-    # +777 / +778 / +779 are intentional short internal admin logins,
-    # so they must NOT pass through the normal 5+ digit phone validator.
-    if not expected or nickname != expected:
-        raise HTTPException(status_code=403, detail="Неверный номер или никнейм администратора")
+@app.post("/api/admin/login")
+async def admin_login(data: AdminLoginData):
+    if not ADMIN_ACCESS_CODE:
+        raise HTTPException(status_code=503, detail="Админ-доступ не настроен")
+    supplied = str(data.access_code or "").strip()
+    if not supplied or not hmac.compare_digest(supplied, ADMIN_ACCESS_CODE):
+        raise HTTPException(status_code=403, detail="Неверный секретный код")
 
     conn = db()
     try:
-        admin = conn.execute("SELECT * FROM users WHERE phone=? AND role='admin'", (phone,)).fetchone()
+        admin = conn.execute(
+            "SELECT * FROM users WHERE phone=? AND role='admin'",
+            (ADMIN_ACCOUNT_PHONE,)
+        ).fetchone()
         if not admin:
             cur = conn.execute("""
                 INSERT INTO users(name,phone,pin_hash,pin_plain,role,created_at,active)
                 VALUES(?,?,?,?,?,?,1)
-            """, (nickname, phone, hash_pin(secrets.token_urlsafe(32)), "", "admin", int(time.time())))
+            """, (
+                ADMIN_ACCOUNT_NAME, ADMIN_ACCOUNT_PHONE,
+                hash_pin(secrets.token_urlsafe(32)), "", "admin", int(time.time())
+            ))
             conn.commit()
             admin = conn.execute("SELECT * FROM users WHERE id=?", (cur.lastrowid,)).fetchone()
         else:
-            conn.execute("UPDATE users SET name=?, active=1 WHERE id=?", (nickname, admin["id"]))
+            conn.execute("UPDATE users SET name=?, active=1 WHERE id=?", (ADMIN_ACCOUNT_NAME, admin["id"]))
             conn.commit()
         token = create_session(admin["id"], "admin")
-        return {"token": token, "role": "admin", "name": nickname}
+        return {"token": token, "role": "admin", "name": ADMIN_ACCOUNT_NAME}
     finally:
         conn.close()
 
@@ -2821,10 +2809,11 @@ async def notify_admins_about_user_message(user, text, file_path=None, file_name
         return
     body = (
         f"SERTAL DELIVERY\n"
+        f"Новое сообщение от клиента\n\n"
         f"Имя: {user['name']}\n"
         f"Телефон: {user['phone']}\n"
         f"ID пользователя: {user['user_id']}\n\n"
-        f"Сообщение: {text or 'Прикреплён файл'}"
+        f"{text or 'Файл'}"
     )
 
     # Preferred mode: one dedicated Telegram support group.
@@ -2865,7 +2854,9 @@ async def send_chat_message(data: ChatMessageData, authorization: str = Header(d
     if not text:
         raise HTTPException(status_code=400, detail="Введите сообщение")
     msg_id = add_chat_message(user["user_id"], user["role"], text)
-    await notify_admins_about_user_message(user, text)
+    # Return to the website immediately. Telegram notification is sent in the background
+    # so a slow Telegram connection can never make the support chat feel stuck.
+    asyncio.create_task(notify_admins_about_user_message(user, text))
     return {"ok": True, "id": msg_id}
 
 
@@ -3416,11 +3407,11 @@ async def notify_deploy_started():
     commit_short = commit[:7] if commit else "новая версия"
     service = os.getenv("RENDER_SERVICE_NAME", "SERTAL DELIVERY")
     message = (
-        "🤖 Мой раб обновил меня.\n\n"
-        "🚀 Обнова запущена и Render поднял новую версию.\n"
+        "SERTAL DELIVERY\n\n"
+        "Новая версия запущена.\n"
         f"Сервис: {service}\n"
         f"Версия: {commit_short}\n"
-        "SERTAL DELIVERY снова в строю."
+        "Сервис работает."
     )
     try:
         await telegram_app.bot.send_message(chat_id=chat_id, text=message)
@@ -3521,4 +3512,4 @@ if __name__ == "__main__":
         app,
         host="0.0.0.0",
         port=int(os.getenv("PORT", "10000"))
-        )
+    )
