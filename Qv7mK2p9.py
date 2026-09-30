@@ -796,12 +796,17 @@ class CustomerAddressData(BaseModel):
 
 @app.get("/")
 async def index():
-    return FileResponse(Path(__file__).resolve().with_name("H4zN8xR1.html"))
+    return FileResponse(Path(__file__).resolve().with_name("H4zN8xR1-2.html"))
 
 
 @app.head("/")
 async def head_index():
     return {}
+
+
+@app.get("/style.css")
+async def style_css():
+    return FileResponse(Path(__file__).resolve().with_name("style.css"), media_type="text/css")
 
 
 # =========================================================
@@ -2405,6 +2410,15 @@ async def promote_courier(customer_id: int, authorization: str = Header(default=
         conn.execute("INSERT INTO couriers(user_id,approved,active,online) VALUES(?,1,1,0)", (customer_id,))
     conn.execute("DELETE FROM sessions WHERE user_id=?", (customer_id,)); conn.commit(); conn.close(); log_action(customer_id, "promote_courier", ""); return {"ok":True}
 
+@app.get("/api/admin/map-orders")
+async def admin_map_orders(authorization: str = Header(default="")):
+    require_admin(authorization)
+    conn = db()
+    orders = conn.execute("SELECT id,title,address,lat,lon,status,price FROM orders WHERE lat IS NOT NULL AND lon IS NOT NULL ORDER BY id DESC LIMIT 500").fetchall()
+    couriers = conn.execute("SELECT c.id,u.name,c.lat,c.lon,c.online FROM couriers c JOIN users u ON u.id=c.user_id WHERE c.active=1 AND c.lat IS NOT NULL AND c.lon IS NOT NULL").fetchall()
+    conn.close()
+    return {"orders":[dict(x) for x in orders], "couriers":[dict(x) for x in couriers]}
+
 # =========================================================
 # COURIER
 # =========================================================
@@ -2806,11 +2820,11 @@ async def notify_admins_about_user_message(user, text, file_path=None, file_name
     if not telegram_app:
         return
     body = (
-        f"💬 SERTAL DELIVERY\n"
-        f"👤 {user['name']}\n"
-        f"📱 {user['phone']}\n"
-        f"🆔 user_id: {user['user_id']}\n\n"
-        f"{text or '📎 Файл'}"
+        f"SERTAL DELIVERY\n"
+        f"Имя: {user['name']}\n"
+        f"Телефон: {user['phone']}\n"
+        f"ID пользователя: {user['user_id']}\n\n"
+        f"Сообщение: {text or 'Прикреплён файл'}"
     )
 
     # Preferred mode: one dedicated Telegram support group.
@@ -3404,9 +3418,9 @@ async def notify_deploy_started():
     message = (
         "🤖 Мой раб обновил меня.\n\n"
         "🚀 Обнова запущена и Render поднял новую версию.\n"
-        f"📦 Сервис: {service}\n"
-        f"🔖 Версия: {commit_short}\n"
-        "✅ SERTAL DELIVERY снова в строю."
+        f"Сервис: {service}\n"
+        f"Версия: {commit_short}\n"
+        "SERTAL DELIVERY снова в строю."
     )
     try:
         await telegram_app.bot.send_message(chat_id=chat_id, text=message)
@@ -3507,4 +3521,4 @@ if __name__ == "__main__":
         app,
         host="0.0.0.0",
         port=int(os.getenv("PORT", "10000"))
-  )
+        )
