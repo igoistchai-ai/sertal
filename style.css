@@ -656,3 +656,11 @@ body,.publicHome,#app{
 .sd-btn:not(.gold),.secondary{background:rgba(255,255,255,.055) !important;border:1px solid rgba(255,255,255,.1) !important;color:#eaf0f7 !important}
 .remote-status-icon{width:18px;height:18px;object-fit:contain;vertical-align:-4px;filter:drop-shadow(0 4px 10px rgba(110,182,255,.22))}
 @media(max-width:760px){.sd-launch-shell{grid-template-columns:1fr}.sd-launch-copy{min-height:430px;padding:28px}.sd-login{margin-top:-2px}.sd-title{font-size:54px}}
+
+
+/* Remote visual icons: no emoji/glyph UI. */
+.remote-ui-icon{width:22px;height:22px;object-fit:contain;display:inline-block;vertical-align:middle;flex:0 0 auto;}
+.sd-icon .remote-ui-icon,.sd-back .remote-ui-icon{width:20px;height:20px;}
+.sd-action .remote-ui-icon,.sd-menu .remote-ui-icon,.sd-bottom .remote-ui-icon,.sd-side .remote-ui-icon{width:24px;height:24px;}
+.pct .remote-ui-icon{width:34px;height:34px;}
+.remote-status-icon{width:18px;height:18px;object-fit:contain;vertical-align:-4px;display:inline-block}
