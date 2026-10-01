@@ -477,7 +477,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;back
  </div></div>
 </div>
 
-
+<div id="authModal" class="hidden"></div>
 <div id="app" class="app hidden">
  <div class="sd-shell">
   <header class="sd-top">
@@ -764,26 +764,19 @@ function showPublicHome(){
   document.getElementById("app")?.classList.add("hidden");
 }
 function openAuth(mode="login"){
-  const forms={login:"loginFormBox",register:"registerFormBox",admin:"adminFormBox"};
-  Object.entries(forms).forEach(([name,id])=>{
-    const el=document.getElementById(id);
-    if(el) el.classList.toggle("hidden", name!==mode);
-  });
-  const titles={
-    login:["SERTAL PRIVATE APP","Войти","Введите номер телефона, чтобы открыть личный кабинет."],
-    register:["SERTAL PRIVATE APP","Регистрация","Создайте клиентский аккаунт."],
-    admin:["SERTAL ADMIN","Вход администратора","Используйте секретный код администратора."]
-  };
+  document.getElementById("authModal")?.classList.remove("hidden");
+  document.getElementById("loginFormBox")?.classList.toggle("hidden", mode!=="login");
+  document.getElementById("registerFormBox")?.classList.toggle("hidden", mode!=="register");
+  document.getElementById("adminFormBox")?.classList.toggle("hidden", mode!=="admin");
+  const titles={login:["ЛИЧНЫЙ КАБИНЕТ","Войти","Введите номер телефона, добавленный в SERTAL DELIVERY."],register:["НОВЫЙ ПОКУПАТЕЛЬ","Регистрация","Создайте аккаунт бесплатно — подтверждение администратора не требуется. Вход дальше будет только по номеру телефона."],admin:["PRIVATE ADMIN","Вход администратора","Введите персональный номер и никнейм администратора."]};
   const t=titles[mode]||titles.login;
-  const title=document.getElementById("authTitle");
-  const text=document.getElementById("authText");
-  if(title) title.textContent=t[1];
-  if(text) text.textContent=t[2];
-  if(typeof sdAuthTab === "function") sdAuthTab(mode);
+  const eyebrow=document.getElementById("authEyebrow"); if(eyebrow) eyebrow.textContent=t[0];
+  document.getElementById("authTitle").textContent=t[1];
+  document.getElementById("authText").textContent=t[2];
 }
-function openLogin(){openAuth("login")}
-function openRegister(){openAuth("register")}
-function openAdminLogin(){openAuth("admin")}
+function openLogin(){openAuth("login");sdAuthTab?.("login")}
+function openRegister(){openAuth("register");sdAuthTab?.("register")}
+function openAdminLogin(){openAuth("admin");sdAuthTab?.("admin")}
 function closeAuth(){document.getElementById("authModal")?.classList.add("hidden")}
 function hideRegister(){closeAuth()}
 
@@ -814,19 +807,6 @@ async function adminPersonalLogin(){
 async function login(){
   const phone=document.getElementById("loginPhone")?.value.trim();
   if(!phone){toast("Введите номер телефона");return}
-
-  // Автоматически отправляем специальные номера +777/+778/+779
-  // в персональный вход администратора, чтобы они не попадали
-  // в обычную проверку телефона.
-  const adminPhone=phone.replace(/\D/g,"");
-  const adminPhones={"777":"администратор","778":"администратор2","779":"администратор3"};
-  if(adminPhones[adminPhone]){
-    document.getElementById("adminPhone").value=phone;
-    document.getElementById("adminNickname").value=adminPhones[adminPhone];
-    openAuth("admin");
-    await adminPersonalLogin();
-    return;
-  }
 
   try{
     const data=await api("/api/login",{method:"POST",body:JSON.stringify({phone,telegram_id:telegramId()})});
